@@ -1,4 +1,5 @@
 package org.cli.sql;
+import static org.cli.utils.Colors.*;
 
 import org.cli.conn.ConnectToPostgreSQL;
 
@@ -7,7 +8,6 @@ import java.sql.*;
 import static org.cli.sql.ExecuteSQL.command;
 
 public class Queries {
-
 
     public static void beginTransaction() {
         try {
@@ -36,7 +36,6 @@ public class Queries {
         }
     }
 
-
     public static void callProcedure(String procedureName) {
         try (CallableStatement callableStatement = ConnectToPostgreSQL.connection.prepareCall("{call " + procedureName + "}")) {
             callableStatement.execute();
@@ -56,7 +55,6 @@ public class Queries {
         }
     }
 
-
     public static void createTable(String tableName, String columns) {
         String sql = "CREATE TABLE " + tableName + " (" + columns + ")";
         command(sql);
@@ -72,7 +70,6 @@ public class Queries {
         command(sql);
     }
 
-
     public static void insertInto(String tableName, String values) {
         String sql = "INSERT INTO " + tableName + " VALUES (" + values + ")";
         command(sql);
@@ -80,7 +77,8 @@ public class Queries {
 
     public static void selectFrom(String tableName, String condition) {
         String sql = "SELECT * FROM " + tableName + (condition.isEmpty() ? "" : " WHERE " + condition);
-
+        System.out.println(tableName);
+        System.out.println(condition);
         try (Statement statement = ConnectToPostgreSQL.connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
 
@@ -145,6 +143,8 @@ public class Queries {
 
     public static void help() {
         System.out.println("Available commands:");
+        System.out.println("-----------------------------------------------------");
+        System.out.println(GREEN + "QUERIES" + RESET);
         System.out.println("- begin-transaction: Start a new transaction.");
         System.out.println("- commit: Commit the current transaction.");
         System.out.println("- rollback: Rollback the current transaction.");
@@ -159,7 +159,12 @@ public class Queries {
         System.out.println("- delete-from <table_name> [condition]: Delete data from a table.");
         System.out.println("- backup-database <file_path>: Backup the database.");
         System.out.println("- restore-database <file_path>: Restore the database.");
-        System.out.println("- help: Show this help message.");
+        System.out.println(RED + "- help: Show this help message." + RESET);
+        System.out.println("-----------------------------------------------------");
+        System.out.println(GREEN + "ENTITY MANAGER" + RESET);
+        System.out.println("- save username:<username> password:<password> database:<database> | Save User");
+        System.out.println("- load users | Display all users");
+        System.out.println("- force user:<EntityId> | Get user by Id");
+        System.out.println("- clone user:<EntityId> | Connect a cloned user");
     }
-
 }

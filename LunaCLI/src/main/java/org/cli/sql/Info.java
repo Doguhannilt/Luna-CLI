@@ -1,4 +1,4 @@
-package org.cli;
+package org.cli.sql;
 
 public class Info {
     static Info info = new Info();
@@ -22,7 +22,6 @@ public class Info {
         this.databaseName = databaseName;
     }
 
-    // BASE_URL: jdbc:postgresql://localhost:5432/
     public static String getBaseUrl() {
         return "jdbc:" + info.getDatabaseName() + "://localhost:" + info.getPORT() + "/";
     }

@@ -1,7 +1,6 @@
 package org.cli.sql;
 
 import org.cli.conn.ConnectToPostgreSQL;
-
 import java.sql.*;
 
 public class ExecuteSQL extends Queries {
@@ -14,62 +13,63 @@ public class ExecuteSQL extends Queries {
 
         try (Statement statement = ConnectToPostgreSQL.connection.createStatement()) {
             String trimmedQuery = sqlQuery.trim().toLowerCase();
+            String[] parts = trimmedQuery.split(" ", 3);
+            String commandType = parts[0];
 
-            if (trimmedQuery.startsWith("begin-transaction")) {
-                beginTransaction();
-            } else if (trimmedQuery.startsWith("commit")) {
-                commitTransaction();
-            } else if (trimmedQuery.startsWith("rollback")) {
-                rollbackTransaction();
-            } else if (trimmedQuery.startsWith("call-procedure")) {
-                String procedureName = trimmedQuery.split(" ")[1];
-                callProcedure(procedureName);
-            } else if (trimmedQuery.startsWith("call-function")) {
-                String functionName = trimmedQuery.split(" ")[1];
-                callFunction(functionName);
-            } else if (trimmedQuery.startsWith("create-table")) {
-                String[] parts = trimmedQuery.split(" ", 3);
-                String tableName = parts[1];
-                String columns = parts[2];
-                createTable(tableName, columns);
-            } else if (trimmedQuery.startsWith("drop-table")) {
-                String tableName = trimmedQuery.split(" ")[1];
-                dropTable(tableName);
-            } else if (trimmedQuery.startsWith("create-schema")) {
-                String schemaName = trimmedQuery.split(" ")[1];
-                createSchema(schemaName);
-            } else if (trimmedQuery.startsWith("insert-into")) {
-                String[] parts = trimmedQuery.split(" ", 3);
-                String tableName = parts[1];
-                String values = parts[2];
-                insertInto(tableName, values);
-            } else if (trimmedQuery.startsWith("select-from")) {
-                String[] parts = trimmedQuery.split(" ", 3);
-                String tableName = parts[1];
-                String condition = parts.length > 2 ? parts[2] : "";
-                selectFrom(tableName, condition);
-            } else if (trimmedQuery.startsWith("update")) {
-                String[] parts = trimmedQuery.split(" ", 4);
-                String tableName = parts[1];
-                String setClause = parts[2];
-                String condition = parts.length > 3 ? parts[3] : "";
-                update(tableName, setClause, condition);
-            } else if (trimmedQuery.startsWith("delete-from")) {
-                String[] parts = trimmedQuery.split(" ", 3);
-                String tableName = parts[1];
-                String condition = parts.length > 2 ? parts[2] : "";
-                deleteFrom(tableName, condition);
-            } else if (trimmedQuery.startsWith("backup-database")) {
-                String filePath = trimmedQuery.split(" ")[1];
-                backupDatabase(filePath);
-            } else if (trimmedQuery.startsWith("restore-database")) {
-                String filePath = trimmedQuery.split(" ")[1];
-                restoreDatabase(filePath);
-            } else if (trimmedQuery.startsWith("help")) {
-                help();
-            } else {
-                statement.execute(sqlQuery);
-                System.out.println("SQL Executed Successfully: " + sqlQuery);
+            switch (commandType) {
+                case "begin-transaction":
+                    beginTransaction();
+                    break;
+                case "commit":
+                    commitTransaction();
+                    break;
+                case "rollback":
+                    rollbackTransaction();
+                    break;
+                case "call-procedure":
+                    callProcedure(parts[1]);
+                    break;
+                case "call-function":
+                    callFunction(parts[1]);
+                    break;
+                case "create-table":
+                    createTable(parts[1], parts[2]);
+                    break;
+                case "drop-table":
+                    dropTable(parts[1]);
+                    break;
+                case "create-schema":
+                    createSchema(parts[1]);
+                    break;
+                case "insert-into":
+                    insertInto(parts[1], parts[2]);
+                    break;
+                case "select-from":
+                    if (parts.length < 2) {
+                        System.out.println("Syntax Error: select-from requires a table name.");
+                        return;
+                    }
+                    selectFrom(parts[1], parts.length > 2 ? parts[2] : "");
+                    break;
+                case "update":
+                    update(parts[1], parts[2], parts.length > 3 ? parts[3] : "");
+                    break;
+                case "delete-from":
+                    deleteFrom(parts[1], parts.length > 2 ? parts[2] : "");
+                    break;
+                case "backup-database":
+                    backupDatabase(parts[1]);
+                    break;
+                case "restore-database":
+                    restoreDatabase(parts[1]);
+                    break;
+                case "help":
+                    help();
+                    break;
+                default:
+                    statement.execute(sqlQuery);
+                    System.out.println("SQL Executed Successfully: " + sqlQuery);
+                    break;
             }
         } catch (SQLException e) {
             System.out.println("SQL Execution Error: " + e.getMessage());
