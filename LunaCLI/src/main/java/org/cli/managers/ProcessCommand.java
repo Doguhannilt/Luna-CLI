@@ -3,11 +3,15 @@ package org.cli.managers;
 import org.cli.conn.ConnectToPostgreSQL;
 import org.cli.entities.ConnectionEntity;
 import org.cli.entities.SaveEntity;
+import org.cli.exceptions.HandleChangePortException;
+import org.cli.exceptions.ParamLengthException;
+import org.cli.exceptions.handleForceUserLoadAndConnectException;
 import org.cli.sql.ExecuteSQL;
 import org.cli.sql.Info;
 
 import java.sql.SQLException;
 
+import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.sql.ProcessCommandQueries.*;
 
 public class ProcessCommand {
@@ -26,8 +30,8 @@ public class ProcessCommand {
         String[] parts = command.split(" ");
 
         if (parts.length < 2) {
-            System.out.println("Invalid Command");
-            return;
+            System.out.println(INVALID_MESSAGE + "Invalid Command");
+
         }
 
         String mainCommand = parts[0].toLowerCase();
@@ -38,7 +42,7 @@ public class ProcessCommand {
                 handleLunaCommand(subCommand, parts);
                 break;
             default:
-                System.out.println("Invalid Command");
+                System.out.println(INVALID_MESSAGE + "Invalid Command");
         }
     }
 
@@ -49,7 +53,7 @@ public class ProcessCommand {
      * @param parts      The split command array.
      * @throws SQLException If a database access error occurs.
      */
-    public static void handleLunaCommand(String subCommand, String[] parts) throws SQLException {
+    public static void handleLunaCommand(String subCommand, String[] parts) throws SQLException{
         switch (subCommand) {
             case "connect":
                 handleDatabaseConnection(parts);
@@ -74,12 +78,11 @@ public class ProcessCommand {
                 break;
             default:
                 if (ConnectToPostgreSQL.isConnected()) {
-                    String sqlCommand = String.join(" ", parts).substring(5); // "luna " kelimesini kaldır
+                    String sqlCommand = String.join(" ", parts).substring(5);
                     ExecuteSQL.command(sqlCommand);
                 } else {
-                    System.out.println("Invalid Command or No Active Connection");
+                    System.out.println(INVALID_MESSAGE + "Unknown Command");
                 }
-
         }
     }
 }

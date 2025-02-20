@@ -1,6 +1,9 @@
 package org.cli;
 
 
+import org.cli.exceptions.HandleChangePortException;
+import org.cli.exceptions.ParamLengthException;
+import org.cli.exceptions.handleForceUserLoadAndConnectException;
 import org.cli.managers.ProcessCommand;
 
 import java.sql.SQLException;
@@ -9,14 +12,14 @@ import java.util.Scanner;
 import static org.cli.utils.Colors.*;
 
 public class Start {
-    public static void commandStart() throws SQLException {
+    public static void commandStart() throws SQLException, ParamLengthException, HandleChangePortException, handleForceUserLoadAndConnectException {
 
 
         Scanner scanner = new Scanner(System.in);
 
 
         System.out.println("---------------------");
-        System.out.println(GREEN + "Luna CLI" + RESET);
+        System.out.println("Luna CLI" );
         System.out.println(RED + ":qa! - EXIT" + RESET);
         System.out.println("---------------------");
 

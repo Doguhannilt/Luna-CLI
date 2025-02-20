@@ -1,15 +1,24 @@
 package org.cli.sql;
 
 import org.cli.conn.ConnectToPostgreSQL;
+import org.cli.exceptions.ConnectionNullException;
+
 import java.sql.*;
 
-public class ExecuteSQL extends Queries {
+import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
+import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
+
+public class ExecuteSQL extends Queries{
 
     public static void command(String sqlQuery) {
-        if (ConnectToPostgreSQL.connection == null) {
-            System.err.println("No active database connection. Please connect first.");
-            return;
+        try {
+            if (ConnectToPostgreSQL.connection == null) {
+                throw new ConnectionNullException();
+            }
+        } catch (ConnectionNullException e) {
+            System.out.println(e.getMessage());
         }
+
 
         try (Statement statement = ConnectToPostgreSQL.connection.createStatement()) {
             String trimmedQuery = sqlQuery.trim().toLowerCase();
@@ -46,7 +55,7 @@ public class ExecuteSQL extends Queries {
                     break;
                 case "select-from":
                     if (parts.length < 2) {
-                        System.out.println("Syntax Error: select-from requires a table name.");
+                        System.out.println(INVALID_MESSAGE + "Syntax Error: select-from requires a table name.");
                         return;
                     }
                     selectFrom(parts[1], parts.length > 2 ? parts[2] : "");
@@ -68,11 +77,11 @@ public class ExecuteSQL extends Queries {
                     break;
                 default:
                     statement.execute(sqlQuery);
-                    System.out.println("SQL Executed Successfully: " + sqlQuery);
+                    System.out.println(VALID_MESSAGE + sqlQuery);
                     break;
             }
         } catch (SQLException e) {
-            System.out.println("SQL Execution Error: " + e.getMessage());
+            System.out.println(INVALID_MESSAGE + e.getMessage());
         }
     }
 }

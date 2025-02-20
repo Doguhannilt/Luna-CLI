@@ -1,53 +1,63 @@
 package org.cli.sql;
 
-
 import org.cli.conn.ConnectToPostgreSQL;
 import org.cli.entities.SaveEntity;
 import org.cli.conn.SaveEntityManager;
+import org.cli.exceptions.HandleChangePortException;
+import org.cli.exceptions.ParamLengthException;
+import org.cli.exceptions.handleForceUserLoadAndConnectException;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
 
+import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
+import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
 import static org.cli.managers.ProcessCommand.connectionEntity;
 import static org.cli.managers.ProcessCommand.saveEntity;
 
-public class ProcessCommandQueries   {
+public class ProcessCommandQueries {
+
     /**
      * Handles database connection commands.
      *
      * @param parts The split command array.
      */
     public static void handleDatabaseConnection(String[] parts) {
-        if (parts.length < 4) {
-            System.out.println("Invalid connection command format.");
-            return;
-        }
-
-        String dbType = parts[2].toLowerCase();
-        LinkedList<String> params = extractParameters(parts, 3);
-
-        for (String param : params) {
-            if (param.startsWith("username:")) {
-                connectionEntity.setUsername(param.substring("username:".length()));
-            } else if (param.startsWith("password:")) {
-                connectionEntity.setPassword(param.substring("password:".length()));
-            } else if (param.startsWith("database:")) {
-                connectionEntity.setDatabase(param.substring("database:".length()));
+        try {
+            if (parts.length < 4) {
+                throw new ParamLengthException();
             }
-        }
 
-        if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
-            if ("postgresql".equals(dbType)) {
-                ConnectToPostgreSQL.connectToDatabase(
-                        connectionEntity.getUsername(),
-                        connectionEntity.getPassword(),
-                        connectionEntity.getDatabase()
-                );
+            String dbType = parts[2].toLowerCase();
+            LinkedList<String> params = extractParameters(parts, 3);
+
+            for (String param : params) {
+                if (param.startsWith("username:")) {
+                    connectionEntity.setUsername(param.substring("username:".length()));
+                } else if (param.startsWith("password:")) {
+                    connectionEntity.setPassword(param.substring("password:".length()));
+                } else if (param.startsWith("database:")) {
+                    connectionEntity.setDatabase(param.substring("database:".length()));
+                }
+            }
+
+            if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
+                if ("postgresql".equals(dbType)) {
+                    ConnectToPostgreSQL.connectToDatabase(
+                            connectionEntity.getUsername(),
+                            connectionEntity.getPassword(),
+                            connectionEntity.getDatabase()
+                    );
+                } else {
+                    System.out.println(INVALID_MESSAGE + "Unsupported Database: " + dbType);
+                }
             } else {
-                System.out.println("Unsupported Database: " + dbType);
+                System.out.println(INVALID_MESSAGE + "Connection Failed");
             }
-        } else {
-            System.out.println("Invalid connection parameters.");
+        } catch (ParamLengthException e) {
+            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
         }
     }
 
@@ -57,27 +67,32 @@ public class ProcessCommandQueries   {
      * @param parts The split command array.
      */
     public static void handleSaveEntity(String[] parts) {
-        if (parts.length < 4) {
-            System.out.println("Invalid save command format.");
-            return;
-        }
-
-        LinkedList<String> saveParams = extractParameters(parts, 2);
-
-        for (String param : saveParams) {
-            if (param.startsWith("username:")) {
-                saveEntity.setUsername(param.substring("username:".length()));
-            } else if (param.startsWith("password:")) {
-                saveEntity.setPassword(param.substring("password:".length()));
-            } else if (param.startsWith("database:")) {
-                saveEntity.setDatabase(param.substring("database:".length()));
+        try {
+            if (parts.length < 4) {
+                throw new ParamLengthException();
             }
-        }
 
-        if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
-            SaveEntityManager.savePerson(saveEntity);
-        } else {
-            System.out.println("Invalid save parameters.");
+            LinkedList<String> saveParams = extractParameters(parts, 2);
+
+            for (String param : saveParams) {
+                if (param.startsWith("username:")) {
+                    saveEntity.setUsername(param.substring("username:".length()));
+                } else if (param.startsWith("password:")) {
+                    saveEntity.setPassword(param.substring("password:".length()));
+                } else if (param.startsWith("database:")) {
+                    saveEntity.setDatabase(param.substring("database:".length()));
+                }
+            }
+
+            if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
+                SaveEntityManager.savePerson(saveEntity);
+            } else {
+                System.out.println(INVALID_MESSAGE + "Invalid save parameters.");
+            }
+        } catch (ParamLengthException e) {
+            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
         }
     }
 
@@ -87,11 +102,17 @@ public class ProcessCommandQueries   {
      * @param parts The split command array.
      */
     public static void handleLoadEntities(String[] parts) {
-        if (parts.length >= 3 && "users".equalsIgnoreCase(parts[2])) {
-            String persons = SaveEntityManager.getAllPersons();
-            System.out.println(persons);
-        } else {
-            System.out.println("Invalid load command.");
+        try {
+            if (parts.length >= 3 && "users".equalsIgnoreCase(parts[2])) {
+                String persons = SaveEntityManager.getAllPersons();
+                System.out.println(persons);
+            } else {
+                throw new ParamLengthException();
+            }
+        } catch (ParamLengthException e) {
+            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
         }
     }
 
@@ -101,33 +122,38 @@ public class ProcessCommandQueries   {
      * @param parts The split command array.
      */
     public static void handleForceUserLoad(String[] parts) {
-        if (parts.length < 3) {
-            System.out.println("Invalid force command format.");
-            return;
-        }
+        try {
+            if (parts.length < 3) {
+                throw new ParamLengthException();
+            }
 
-        SaveEntity entity = new SaveEntity();
-        LinkedList<String> saveParams = extractParameters(parts, 2);
+            SaveEntity entity = new SaveEntity();
+            LinkedList<String> saveParams = extractParameters(parts, 2);
 
-        for (String param : saveParams) {
-            if (param.startsWith("user:")) {
-                String userId = param.substring("user:".length());
-                if (userId.startsWith("\"") && userId.endsWith("\"")) {
-                    userId = userId.substring(1, userId.length() - 1);
+            for (String param : saveParams) {
+                if (param.startsWith("user:")) {
+                    String userId = param.substring("user:".length());
+                    if (userId.startsWith("\"") && userId.endsWith("\"")) {
+                        userId = userId.substring(1, userId.length() - 1);
+                    }
+                    entity.setId(userId);
                 }
-                entity.setId(userId);
             }
-        }
 
-        if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
-            SaveEntity user = SaveEntityManager.getPerson(entity.getId());
-            if (user != null) {
-                System.out.println("User found: " + user);
+            if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
+                SaveEntity user = SaveEntityManager.getPerson(entity.getId());
+                if (user != null) {
+                    System.out.println(VALID_MESSAGE + "User found: " + user);
+                } else {
+                    System.out.println(INVALID_MESSAGE + "User not found.");
+                }
             } else {
-                System.out.println("User not found.");
+                System.out.println(INVALID_MESSAGE + "Invalid user retrieval parameters.");
             }
-        } else {
-            System.out.println("Invalid user retrieval parameters.");
+        } catch (ParamLengthException e) {
+            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
         }
     }
 
@@ -137,16 +163,20 @@ public class ProcessCommandQueries   {
      * @param parts The split command array.
      */
     public static void handleChangePort(String[] parts) {
-        if (parts.length != 2 || !parts[1].contains(":")) {
-            System.out.println("Invalid port command format.");
-            return;
-        }
-
         try {
+            if (parts.length != 2 || !parts[1].contains(":")) {
+                throw new ParamLengthException();
+            }
+
             int newPort = Integer.parseInt(parts[1].split(":")[1]);
+            if (newPort < 1024 || newPort > 65535) {
+                throw new HandleChangePortException();
+            }
             ConnectToPostgreSQL.changePort(newPort);
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid port number.");
+        } catch (ParamLengthException | HandleChangePortException e) {
+            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
         }
     }
 
@@ -158,37 +188,52 @@ public class ProcessCommandQueries   {
      * @return A list of parameters extracted from the command.
      */
     public static LinkedList<String> extractParameters(String[] parts, int startIndex) {
-        LinkedList<String> params = new LinkedList<>();
-        for (int i = startIndex; i < parts.length; i++) {
-            params.add(parts[i]);
+        try {
+            LinkedList<String> params = new LinkedList<>();
+            for (int i = startIndex; i < parts.length; i++) {
+                params.add(parts[i]);
+            }
+            return params;
+        } catch (Exception e) {
+            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
+            return new LinkedList<>();
         }
-        return params;
     }
 
-    public static void handleForceUserLoadAndConnect(String[] parts) throws SQLException {
-        if (parts.length < 3) {
-            System.out.println("Invalid force command format.");
-            return;
-        }
-
-        SaveEntity entity = new SaveEntity();
-        LinkedList<String> saveParams = extractParameters(parts, 2);
-
-        for (String param : saveParams) {
-            if (param.startsWith("user:")) {
-                String userId = param.substring("user:".length());
-                if (userId.startsWith("\"") && userId.endsWith("\"")) {
-                    userId = userId.substring(1, userId.length() - 1);
-                }
-                entity.setId(userId);
+    /**
+     * Connect your saved clone entity.
+     *
+     * @param parts The split command array.
+     */
+    public static void handleForceUserLoadAndConnect(String[] parts) {
+        try {
+            if (parts.length < 3) {
+                throw new ParamLengthException();
             }
-        }
 
-        if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
-            ConnectToPostgreSQL.connection.close();
-            SaveEntityManager.cloneUser(entity.getId());
-        } else {
-            System.out.println("Invalid User Clone");
+            SaveEntity entity = new SaveEntity();
+            LinkedList<String> saveParams = extractParameters(parts, 2);
+
+            for (String param : saveParams) {
+                if (param.startsWith("user:")) {
+                    String userId = param.substring("user:".length());
+                    if (userId.startsWith("\"") && userId.endsWith("\"")) {
+                        userId = userId.substring(1, userId.length() - 1);
+                    }
+                    entity.setId(userId);
+                }
+            }
+
+            if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
+                ConnectToPostgreSQL.connection.close();
+                SaveEntityManager.cloneUser(entity.getId());
+            } else {
+                throw new handleForceUserLoadAndConnectException(connectionEntity.getDatabase());
+            }
+        } catch (ParamLengthException | handleForceUserLoadAndConnectException | SQLException e) {
+            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
         }
     }
 }
