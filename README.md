@@ -86,6 +86,10 @@ This will output details like database name, port, and connection status.
 - backup-database <file_path>: Backup the database.
 - restore-database <file_path>: Restore the database.
 - help: Show this help message.
+- save username:<username> password:<password> database:<database> | Save User
+- load users | Display all users
+- force user:<EntityId> | Get user by Id
+- clone user:<EntityId> | Connect a cloned user
 ```
 
 ## Development & Contribution
