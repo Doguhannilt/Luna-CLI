@@ -11,7 +11,7 @@ import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
 import static org.cli.sql.Info.getBaseUrl;
 
 
-public class ConnectToPostgreSQL {
+public class ConnectToPostgresSQL {
 
     static Info info = new Info();
     public static  Connection connection = null;

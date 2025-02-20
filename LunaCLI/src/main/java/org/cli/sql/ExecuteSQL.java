@@ -1,6 +1,6 @@
 package org.cli.sql;
 
-import org.cli.conn.ConnectToPostgreSQL;
+import org.cli.conn.ConnectToPostgresSQL;
 import org.cli.exceptions.ConnectionNullException;
 
 import java.sql.*;
@@ -11,11 +11,11 @@ import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
 public class ExecuteSQL extends Queries{
 
     public static void command(String sqlQuery) {
-        try { if (ConnectToPostgreSQL.connection == null) { throw new ConnectionNullException(); }}
+        try { if (ConnectToPostgresSQL.connection == null) { throw new ConnectionNullException(); }}
         catch (ConnectionNullException e) { System.out.println(e.getMessage());}
 
 
-        try (Statement statement = ConnectToPostgreSQL.connection.createStatement()) {
+        try (Statement statement = ConnectToPostgresSQL.connection.createStatement()) {
             String trimmedQuery = sqlQuery.trim().toLowerCase();
             String[] parts = trimmedQuery.split(" ", 3);
             String commandType = parts[0];

@@ -4,14 +4,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.cli.entities.SaveEntity;
 import org.cli.utils.ConnectionPath;
-import org.jasypt.util.text.BasicTextEncryptor;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.cli.conn.ConnectToPostgreSQL.*;
+import static org.cli.conn.ConnectToPostgresSQL.*;
 
 public class SaveEntityManager {
 

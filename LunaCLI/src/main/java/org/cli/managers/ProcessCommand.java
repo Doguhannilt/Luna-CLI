@@ -1,13 +1,9 @@
 package org.cli.managers;
 
-import org.cli.conn.ConnectToPostgreSQL;
+import org.cli.conn.ConnectToPostgresSQL;
 import org.cli.entities.ConnectionEntity;
 import org.cli.entities.SaveEntity;
-import org.cli.exceptions.HandleChangePortException;
-import org.cli.exceptions.ParamLengthException;
-import org.cli.exceptions.handleForceUserLoadAndConnectException;
 import org.cli.sql.ExecuteSQL;
-import org.cli.sql.Info;
 
 import java.sql.SQLException;
 
@@ -67,13 +63,13 @@ public class ProcessCommand {
                 handleChangePort(parts);
                 break;
             case "info":
-                ConnectToPostgreSQL.displayInfo();
+                ConnectToPostgresSQL.displayInfo();
                 break;
             case "clone":
                 handleForceUserLoadAndConnect(parts);
                 break;
             default:
-                if (ConnectToPostgreSQL.isConnected()) {
+                if (ConnectToPostgresSQL.isConnected()) {
                     String sqlCommand = String.join(" ", parts).substring(5);
                     ExecuteSQL.command(sqlCommand);
                 } else {

@@ -1,7 +1,7 @@
 package org.cli.sql;
 import static org.cli.utils.Colors.*;
 
-import org.cli.conn.ConnectToPostgreSQL;
+import org.cli.conn.ConnectToPostgresSQL;
 
 import java.sql.*;
 
@@ -11,7 +11,7 @@ public class Queries {
 
     public static void beginTransaction() {
         try {
-            ConnectToPostgreSQL.connection.setAutoCommit(false);
+            ConnectToPostgresSQL.connection.setAutoCommit(false);
             System.out.println("Transaction started.");
         } catch (SQLException e) {
             System.out.println("Transaction Error: " + e.getMessage());
@@ -20,7 +20,7 @@ public class Queries {
 
     public static void commitTransaction() {
         try {
-            ConnectToPostgreSQL.connection.commit();
+            ConnectToPostgresSQL.connection.commit();
             System.out.println("Transaction committed successfully.");
         } catch (SQLException e) {
             System.out.println("Commit Error: " + e.getMessage());
@@ -29,7 +29,7 @@ public class Queries {
 
     public static void rollbackTransaction() {
         try {
-            ConnectToPostgreSQL.connection.rollback();
+            ConnectToPostgresSQL.connection.rollback();
             System.out.println("Transaction rolled back successfully.");
         } catch (SQLException e) {
             System.out.println("Rollback Error: " + e.getMessage());
@@ -37,7 +37,7 @@ public class Queries {
     }
 
     public static void callProcedure(String procedureName) {
-        try (CallableStatement callableStatement = ConnectToPostgreSQL.connection.prepareCall("{call " + procedureName + "}")) {
+        try (CallableStatement callableStatement = ConnectToPostgresSQL.connection.prepareCall("{call " + procedureName + "}")) {
             callableStatement.execute();
             System.out.println("Procedure '" + procedureName + "' executed successfully.");
         } catch (SQLException e) {
@@ -46,7 +46,7 @@ public class Queries {
     }
 
     public static void callFunction(String functionName) {
-        try (CallableStatement callableStatement = ConnectToPostgreSQL.connection.prepareCall("{? = call " + functionName + "}")) {
+        try (CallableStatement callableStatement = ConnectToPostgresSQL.connection.prepareCall("{? = call " + functionName + "}")) {
             callableStatement.registerOutParameter(1, Types.OTHER);
             callableStatement.execute();
             System.out.println("Function '" + functionName + "' returned: " + callableStatement.getObject(1));
@@ -79,7 +79,7 @@ public class Queries {
         String sql = "SELECT * FROM " + tableName + (condition.isEmpty() ? "" : " WHERE " + condition);
         System.out.println(tableName);
         System.out.println(condition);
-        try (Statement statement = ConnectToPostgreSQL.connection.createStatement()) {
+        try (Statement statement = ConnectToPostgresSQL.connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
 
             if (!resultSet.next()) {

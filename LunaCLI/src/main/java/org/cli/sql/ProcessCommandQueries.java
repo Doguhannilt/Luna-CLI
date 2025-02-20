@@ -1,6 +1,6 @@
 package org.cli.sql;
 
-import org.cli.conn.ConnectToPostgreSQL;
+import org.cli.conn.ConnectToPostgresSQL;
 import org.cli.entities.SaveEntity;
 import org.cli.conn.SaveEntityManager;
 import org.cli.exceptions.HandleChangePortException;
@@ -40,7 +40,8 @@ public class ProcessCommandQueries {
                 /*
                 * PostgresSQL Connection
                 */
-                if ("postgresql".equals(dbType)) {ConnectToPostgreSQL.connectToDatabase(connectionEntity.getUsername(),connectionEntity.getPassword(),connectionEntity.getDatabase());
+                if ("postgresql".equals(dbType)) {
+                    ConnectToPostgresSQL.connectToDatabase(connectionEntity.getUsername(),connectionEntity.getPassword(),connectionEntity.getDatabase());
 
             } else {System.out.println(INVALID_MESSAGE + "Unsupported Database: " + dbType);}
             } else {System.out.println(INVALID_MESSAGE + "Connection Failed");}
@@ -144,7 +145,7 @@ public class ProcessCommandQueries {
             int newPort = Integer.parseInt(parts[1].split(":")[1]);
             if (newPort < 1024 || newPort > 65535) {throw new HandleChangePortException();}
 
-            ConnectToPostgreSQL.changePort(newPort);
+            ConnectToPostgresSQL.changePort(newPort);
 
         } catch (ParamLengthException | HandleChangePortException e) { System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
         } catch (Exception e) { System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
@@ -193,7 +194,7 @@ public class ProcessCommandQueries {
             }
 
             if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
-                ConnectToPostgreSQL.connection.close();
+                ConnectToPostgresSQL.connection.close();
                 SaveEntityManager.cloneUser(entity.getId());
             }
             else {throw new handleForceUserLoadAndConnectException(connectionEntity.getDatabase());}
