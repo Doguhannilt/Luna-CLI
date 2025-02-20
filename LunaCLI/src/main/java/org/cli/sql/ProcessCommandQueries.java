@@ -24,41 +24,28 @@ public class ProcessCommandQueries {
      */
     public static void handleDatabaseConnection(String[] parts) {
         try {
-            if (parts.length < 4) {
-                throw new ParamLengthException();
-            }
+            if (parts.length < 4) {throw new ParamLengthException();}
 
             String dbType = parts[2].toLowerCase();
             LinkedList<String> params = extractParameters(parts, 3);
 
             for (String param : params) {
-                if (param.startsWith("username:")) {
-                    connectionEntity.setUsername(param.substring("username:".length()));
-                } else if (param.startsWith("password:")) {
-                    connectionEntity.setPassword(param.substring("password:".length()));
-                } else if (param.startsWith("database:")) {
-                    connectionEntity.setDatabase(param.substring("database:".length()));
-                }
+                if (param.startsWith("username:"))
+                { connectionEntity.setUsername(param.substring("username:".length()));
+                } else if (param.startsWith("password:")) {connectionEntity.setPassword(param.substring("password:".length()));
+                } else if (param.startsWith("database:")) {connectionEntity.setDatabase(param.substring("database:".length()));}
             }
 
-            if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
-                if ("postgresql".equals(dbType)) {
-                    ConnectToPostgreSQL.connectToDatabase(
-                            connectionEntity.getUsername(),
-                            connectionEntity.getPassword(),
-                            connectionEntity.getDatabase()
-                    );
-                } else {
-                    System.out.println(INVALID_MESSAGE + "Unsupported Database: " + dbType);
-                }
-            } else {
-                System.out.println(INVALID_MESSAGE + "Connection Failed");
-            }
-        } catch (ParamLengthException e) {
-            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
-        }
+            if (connectionEntity.getUsername() != null || connectionEntity.getDatabase() != null) {
+                /*
+                * PostgresSQL Connection
+                */
+                if ("postgresql".equals(dbType)) {ConnectToPostgreSQL.connectToDatabase(connectionEntity.getUsername(),connectionEntity.getPassword(),connectionEntity.getDatabase());
+
+            } else {System.out.println(INVALID_MESSAGE + "Unsupported Database: " + dbType);}
+            } else {System.out.println(INVALID_MESSAGE + "Connection Failed");}
+        } catch (ParamLengthException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
 
     /**
@@ -109,11 +96,8 @@ public class ProcessCommandQueries {
             } else {
                 throw new ParamLengthException();
             }
-        } catch (ParamLengthException e) {
-            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
-        }
+        } catch (ParamLengthException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
 
     /**
@@ -123,9 +107,7 @@ public class ProcessCommandQueries {
      */
     public static void handleForceUserLoad(String[] parts) {
         try {
-            if (parts.length < 3) {
-                throw new ParamLengthException();
-            }
+            if (parts.length < 3) {throw new ParamLengthException();}
 
             SaveEntity entity = new SaveEntity();
             LinkedList<String> saveParams = extractParameters(parts, 2);
@@ -142,19 +124,12 @@ public class ProcessCommandQueries {
 
             if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
                 SaveEntity user = SaveEntityManager.getPerson(entity.getId());
-                if (user != null) {
-                    System.out.println(VALID_MESSAGE + "User found: " + user);
-                } else {
-                    System.out.println(INVALID_MESSAGE + "User not found.");
-                }
-            } else {
-                System.out.println(INVALID_MESSAGE + "Invalid user retrieval parameters.");
+                if (user != null) {System.out.println(VALID_MESSAGE + "User found: " + user);}
+                else {System.out.println(INVALID_MESSAGE + "User not found.");}
             }
-        } catch (ParamLengthException e) {
-            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
-        }
+            else {System.out.println(INVALID_MESSAGE + "Invalid user retrieval parameters.");}
+        } catch (ParamLengthException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
 
     /**
@@ -164,20 +139,15 @@ public class ProcessCommandQueries {
      */
     public static void handleChangePort(String[] parts) {
         try {
-            if (parts.length != 2 || !parts[1].contains(":")) {
-                throw new ParamLengthException();
-            }
+            if (parts.length != 2 || !parts[1].contains(":")) {throw new ParamLengthException();}
 
             int newPort = Integer.parseInt(parts[1].split(":")[1]);
-            if (newPort < 1024 || newPort > 65535) {
-                throw new HandleChangePortException();
-            }
+            if (newPort < 1024 || newPort > 65535) {throw new HandleChangePortException();}
+
             ConnectToPostgreSQL.changePort(newPort);
-        } catch (ParamLengthException | HandleChangePortException e) {
-            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
-        }
+
+        } catch (ParamLengthException | HandleChangePortException e) { System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) { System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
 
     /**
@@ -207,9 +177,7 @@ public class ProcessCommandQueries {
      */
     public static void handleForceUserLoadAndConnect(String[] parts) {
         try {
-            if (parts.length < 3) {
-                throw new ParamLengthException();
-            }
+            if (parts.length < 3) {throw new ParamLengthException();}
 
             SaveEntity entity = new SaveEntity();
             LinkedList<String> saveParams = extractParameters(parts, 2);
@@ -227,13 +195,9 @@ public class ProcessCommandQueries {
             if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
                 ConnectToPostgreSQL.connection.close();
                 SaveEntityManager.cloneUser(entity.getId());
-            } else {
-                throw new handleForceUserLoadAndConnectException(connectionEntity.getDatabase());
             }
-        } catch (ParamLengthException | handleForceUserLoadAndConnectException | SQLException e) {
-            System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
-        }
+            else {throw new handleForceUserLoadAndConnectException(connectionEntity.getDatabase());}
+        } catch (ParamLengthException | handleForceUserLoadAndConnectException | SQLException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
+        } catch (Exception e) { System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
 }

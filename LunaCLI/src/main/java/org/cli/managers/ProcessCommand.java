@@ -16,7 +16,6 @@ import static org.cli.sql.ProcessCommandQueries.*;
 
 public class ProcessCommand {
 
-    static Info info = new Info();
     static public ConnectionEntity connectionEntity = new ConnectionEntity();
     static public SaveEntity saveEntity = new SaveEntity();
 
@@ -29,10 +28,7 @@ public class ProcessCommand {
     public static void command(String command) throws SQLException {
         String[] parts = command.split(" ");
 
-        if (parts.length < 2) {
-            System.out.println(INVALID_MESSAGE + "Invalid Command");
-
-        }
+        if (parts.length < 2) { System.out.println(INVALID_MESSAGE + "Invalid Command");}
 
         String mainCommand = parts[0].toLowerCase();
         String subCommand = parts[1].toLowerCase();

@@ -11,13 +11,8 @@ import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
 public class ExecuteSQL extends Queries{
 
     public static void command(String sqlQuery) {
-        try {
-            if (ConnectToPostgreSQL.connection == null) {
-                throw new ConnectionNullException();
-            }
-        } catch (ConnectionNullException e) {
-            System.out.println(e.getMessage());
-        }
+        try { if (ConnectToPostgreSQL.connection == null) { throw new ConnectionNullException(); }}
+        catch (ConnectionNullException e) { System.out.println(e.getMessage());}
 
 
         try (Statement statement = ConnectToPostgreSQL.connection.createStatement()) {

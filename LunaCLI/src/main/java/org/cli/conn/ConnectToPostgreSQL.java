@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
+import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
 import static org.cli.sql.Info.getBaseUrl;
 
 
@@ -50,25 +52,22 @@ public class ConnectToPostgreSQL {
 
         try {
             if (connection != null && !connection.isClosed()) {
-                System.out.println("Already connected to: " + database);
+                System.out.println(INVALID_MESSAGE +  "Already connected to: " + database);
                 return;
             }
-
             connection = DriverManager.getConnection(urlForConnection, username, password);
-            System.out.println("Connected to database: " + connection.getMetaData().getDatabaseProductName());
-        } catch (SQLException e) {
-            System.out.println("Connection Error: " + e.getMessage());
+            System.out.println(VALID_MESSAGE + "Connected to database: " + connection.getMetaData().getDatabaseProductName());
         }
+        catch (SQLException e) {System.out.println(INVALID_MESSAGE + "Connection Error: " + e.getMessage());}
     }
 
     public static void closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Database connection closed.");
+                System.out.println(VALID_MESSAGE + "Database connection closed.");
             }
-        } catch (SQLException e) {
-            System.out.println("Error closing connection: " + e.getMessage());
         }
+        catch (SQLException e) { System.out.println(INVALID_MESSAGE + "Error closing connection: " + e.getMessage());}
     }
 }
