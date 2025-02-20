@@ -1,9 +1,10 @@
-package org.cli;
+package org.cli.managers;
 
 import org.cli.conn.ConnectToPostgreSQL;
 import org.cli.entities.ConnectionEntity;
 import org.cli.entities.SaveEntity;
 import org.cli.sql.ExecuteSQL;
+import org.cli.sql.Info;
 
 import java.sql.SQLException;
 
@@ -68,12 +69,17 @@ public class ProcessCommand {
             case "info":
                 ConnectToPostgreSQL.displayInfo();
                 break;
+            case "clone":
+                handleForceUserLoadAndConnect(parts);
+                break;
             default:
                 if (ConnectToPostgreSQL.isConnected()) {
-                    ExecuteSQL.command(String.join(" ", parts));
+                    String sqlCommand = String.join(" ", parts).substring(5); // "luna " kelimesini kaldır
+                    ExecuteSQL.command(sqlCommand);
                 } else {
                     System.out.println("Invalid Command or No Active Connection");
                 }
+
         }
     }
 }

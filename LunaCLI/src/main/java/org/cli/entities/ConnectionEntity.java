@@ -1,4 +1,4 @@
-package org.cli.conn;
+package org.cli.entities;
 
 public class ConnectionEntity {
 

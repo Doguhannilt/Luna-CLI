@@ -1,0 +1,11 @@
+[ {
+  "id" : "Person1",
+  "username" : "postgres",
+  "password" : "postgres",
+  "database" : "jpa"
+}, {
+  "id" : "Person2",
+  "username" : "postgres",
+  "password" : "postgres",
+  "database" : "managify"
+} ]
