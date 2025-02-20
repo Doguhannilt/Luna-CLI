@@ -8,6 +8,7 @@ LunaCLI is a simple command-line tool designed to interact with PostgreSQL datab
 - Execute SQL commands directly from the CLI.
 - Supports dynamic port configuration.
 - Supports various database operations like transactions, table management, and schema creation.
+- Create an entity and clone it to connect to the terminal.
 
 ## Prerequisites
 Before running LunaCLI, ensure you have the following installed:
@@ -31,7 +32,7 @@ To start the LunaCLI, execute:
  java -jar LunaCLI.jar
 ```
 
-### Connecting to a Database
+### Connecting to a Database (PostgresSQL)
 Use the following command to connect:
 ```sh
  luna connect postgresql username:yourUser password:yourPassword database:yourDatabase
