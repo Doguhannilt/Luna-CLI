@@ -1,12 +1,12 @@
 package org.cli.conn;
 
-import org.cli.Info;
+import org.cli.sql.Info;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static org.cli.Info.getBaseUrl;
+import static org.cli.sql.Info.getBaseUrl;
 
 
 public class ConnectToPostgreSQL {
@@ -38,11 +38,11 @@ public class ConnectToPostgreSQL {
         System.out.printf("""
                 Database Information:
                 ---------------------
-                DB_NAME: %s
+                DATABASE NAME: %s
                 PORT: %d
                 BASE_URL: %s
                 Connection Status: %s
-                %n""", info.getDatabaseName(), info.getPORT(), getBaseUrl(), (connection != null && !connection.isClosed() ? "Connected" : "Not Connected"));
+                %n""" ,info.getDatabaseName(), info.getPORT(), getBaseUrl(), (connection != null && !connection.isClosed() ? "Connected" : "Not Connected"));
     }
 
     public static void connectToDatabase(String username, String password, String database) {
