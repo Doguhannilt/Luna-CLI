@@ -1,9 +1,9 @@
 package org.cli.conn;
 
-public class ConnectionVariables {
+public class ConnectionEntity {
 
     private String username;
-    private String password;
+    private static String password;
     private String database;
 
     public String getUsername() {
@@ -14,7 +14,7 @@ public class ConnectionVariables {
         this.username = username;
     }
 
-    public String getPassword() {
+    public static String getPassword() {
         return password;
     }
 
