@@ -1,6 +1,6 @@
 # LunaCLI - Command Line Interface for Database Management
 
-LunaCLI is a command-line tool designed to interact with databases (Now only available in PostgresSQL). It allows users to connect, execute SQL commands, and configure connection settings dynamically.
+LunaCLI is a command-line tool designed to interact with POSTGRESQL. It allows users to connect, execute SQL commands, and configure connection settings dynamically.
 
 ## Features
 - Connect to PostgreSQL databases with custom credentials.
