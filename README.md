@@ -12,7 +12,7 @@ LunaCLI is a command-line tool designed to interact with POSTGRESQL. It allows u
 
 ## **Some features that I've been working on**  
 
-LunaCLI is evolving! We are excited to introduce the following upcoming features to enhance usability and efficiency:  
+LunaCLI is evolving! I am excited to introduce the following upcoming features to enhance usability and efficiency:  
 
 ### **📊 Display Query Results in Table Format**  
 - Query results will now be displayed in a structured table format for better readability.  
