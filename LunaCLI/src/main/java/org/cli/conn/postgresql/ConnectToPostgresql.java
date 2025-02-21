@@ -1,4 +1,4 @@
-package org.cli.conn;
+package org.cli.conn.postgresql;
 
 import org.cli.sql.Info;
 
@@ -8,13 +8,13 @@ import java.sql.SQLException;
 
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
-import static org.cli.sql.Info.getBaseUrl;
+import static org.cli.sql.Info.getBaseUrlForPostgresql;
 
 
-public class ConnectToPostgresSQL {
+public class ConnectToPostgresql {
 
     static Info info = new Info();
-    public static  Connection connection = null;
+    public static Connection connection = null;
 
     public static boolean isConnected() {
         try {
@@ -44,11 +44,11 @@ public class ConnectToPostgresSQL {
                 PORT: %d
                 BASE_URL: %s
                 Connection Status: %s
-                %n""" ,info.getDatabaseName(), info.getPORT(), getBaseUrl(), (connection != null && !connection.isClosed() ? "Connected" : "Not Connected"));
+                %n""" ,info.getDatabaseName(), info.getPORT(), getBaseUrlForPostgresql(), (connection != null && !connection.isClosed() ? "Connected" : "Not Connected"));
     }
 
     public static void connectToDatabase(String username, String password, String database) {
-        String urlForConnection = getBaseUrl() + database;
+        String urlForConnection = getBaseUrlForPostgresql() + database;
 
         try {
             if (connection != null && !connection.isClosed()) {

@@ -1,4 +1,4 @@
-package org.cli.conn;
+package org.cli.conn.postgresql;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.cli.conn.ConnectToPostgresSQL.*;
+import static org.cli.conn.postgresql.ConnectToPostgresql.*;
 
-public class SaveEntityManager {
+public class SaveEntityManagerPostgresql {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -20,12 +20,9 @@ public class SaveEntityManager {
 
         List<SaveEntity>  connections = loadConnections();
 
-
         int newId = connections.size() + 1;
         saveEntity.setId("Person" + newId);
 
-        // luna connect postgresql username:postgres password:postgres database:jpa
-        // luna save username:postgres password:postgres database:jpa
         saveEntity.setUsername(saveEntity.getUsername());
         saveEntity.setPassword(saveEntity.getPassword());
         saveEntity.setDatabase(saveEntity.getDatabase());
@@ -75,7 +72,7 @@ public class SaveEntityManager {
             List<SaveEntity> users = mapper.readValue(new File("connections.json"), mapper.getTypeFactory().constructCollectionType(List.class, SaveEntity.class));
 
             for (SaveEntity user : users) {
-                System.out.println("Checking user: " + user.getId()); // Kullanıcıları kontrol et
+                System.out.println("Checking user: " + user.getId());
                 if (user.getId().equals(id)) {
                     return user;
                 }

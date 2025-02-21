@@ -1,16 +1,16 @@
-package org.cli.managers;
+package org.cli.manager;
 
-import org.cli.conn.ConnectToPostgresSQL;
+import org.cli.conn.postgresql.ConnectToPostgresql;
 import org.cli.entities.ConnectionEntity;
 import org.cli.entities.SaveEntity;
-import org.cli.sql.ExecuteSQL;
+import org.cli.sql.postgresql.ExecutePostgresql;
 
 import java.sql.SQLException;
 
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
-import static org.cli.sql.ProcessCommandQueries.*;
+import static org.cli.sql.postgresql.ProcessCommandQueriesPostgresql.*;
 
-public class ProcessCommand {
+public class CommandPackage {
 
     static public ConnectionEntity connectionEntity = new ConnectionEntity();
     static public SaveEntity saveEntity = new SaveEntity();
@@ -51,10 +51,10 @@ public class ProcessCommand {
                 handleDatabaseConnection(parts);
                 break;
             case "save":
-                handleSaveEntity(parts);
+                    handleSaveEntity(parts);
                 break;
             case "load":
-                handleLoadEntities(parts);
+                    handleLoadEntities(parts);
                 break;
             case "force":
                 handleForceUserLoad(parts);
@@ -63,15 +63,15 @@ public class ProcessCommand {
                 handleChangePort(parts);
                 break;
             case "info":
-                ConnectToPostgresSQL.displayInfo();
+                ConnectToPostgresql.displayInfo();
                 break;
             case "clone":
                 handleForceUserLoadAndConnect(parts);
                 break;
             default:
-                if (ConnectToPostgresSQL.isConnected()) {
+                if (ConnectToPostgresql.isConnected()) {
                     String sqlCommand = String.join(" ", parts).substring(5);
-                    ExecuteSQL.command(sqlCommand);
+                    ExecutePostgresql.command(sqlCommand);
                 } else {
                     System.out.println(INVALID_MESSAGE + "Unknown Command");
                 }

@@ -4,7 +4,7 @@ package org.cli;
 import org.cli.exceptions.HandleChangePortException;
 import org.cli.exceptions.ParamLengthException;
 import org.cli.exceptions.handleForceUserLoadAndConnectException;
-import org.cli.managers.ProcessCommand;
+import org.cli.manager.CommandPackage;
 
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -30,7 +30,7 @@ public class Start {
             if (input.equalsIgnoreCase(":qa!")) {
                 break;
             }
-            ProcessCommand.command(input);
+            CommandPackage.command(input);
         }
 
         System.out.println("---------------------");

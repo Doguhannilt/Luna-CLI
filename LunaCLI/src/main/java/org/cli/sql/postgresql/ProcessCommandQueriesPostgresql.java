@@ -1,8 +1,9 @@
-package org.cli.sql;
+package org.cli.sql.postgresql;
 
-import org.cli.conn.ConnectToPostgresSQL;
+
+import org.cli.conn.postgresql.ConnectToPostgresql;
 import org.cli.entities.SaveEntity;
-import org.cli.conn.SaveEntityManager;
+import org.cli.conn.postgresql.SaveEntityManagerPostgresql;
 import org.cli.exceptions.HandleChangePortException;
 import org.cli.exceptions.ParamLengthException;
 import org.cli.exceptions.handleForceUserLoadAndConnectException;
@@ -12,11 +13,11 @@ import java.util.LinkedList;
 
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
-import static org.cli.managers.ProcessCommand.connectionEntity;
-import static org.cli.managers.ProcessCommand.saveEntity;
+import static org.cli.manager.CommandPackage.connectionEntity;
+import static org.cli.manager.CommandPackage.saveEntity;
 
-public class ProcessCommandQueries {
-
+public class ProcessCommandQueriesPostgresql {
+    public static String dbType;
     /**
      * Handles database connection commands.
      *
@@ -26,7 +27,8 @@ public class ProcessCommandQueries {
         try {
             if (parts.length < 4) {throw new ParamLengthException();}
 
-            String dbType = parts[2].toLowerCase();
+            dbType = parts[2].toLowerCase();
+
             LinkedList<String> params = extractParameters(parts, 3);
 
             for (String param : params) {
@@ -36,14 +38,9 @@ public class ProcessCommandQueries {
                 } else if (param.startsWith("database:")) {connectionEntity.setDatabase(param.substring("database:".length()));}
             }
 
-            if (connectionEntity.getUsername() != null || connectionEntity.getDatabase() != null) {
-                /*
-                * PostgresSQL Connection
-                */
-                if ("postgresql".equals(dbType)) {
-                    ConnectToPostgresSQL.connectToDatabase(connectionEntity.getUsername(),connectionEntity.getPassword(),connectionEntity.getDatabase());
-
-            } else {System.out.println(INVALID_MESSAGE + "Unsupported Database: " + dbType);}
+            if (connectionEntity.getUsername() != null && connectionEntity.getPassword() != null && connectionEntity.getDatabase() != null) {
+                if ("postgresql".equals(dbType)) {ConnectToPostgresql.connectToDatabase(connectionEntity.getUsername(), connectionEntity.getPassword(), connectionEntity.getDatabase());}
+                else { System.out.println(INVALID_MESSAGE + "Unsupported Database: " + dbType);}
             } else {System.out.println(INVALID_MESSAGE + "Connection Failed");}
         } catch (ParamLengthException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
         } catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
@@ -73,7 +70,7 @@ public class ProcessCommandQueries {
             }
 
             if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
-                SaveEntityManager.savePerson(saveEntity);
+                SaveEntityManagerPostgresql.savePerson(saveEntity);
             } else {
                 System.out.println(INVALID_MESSAGE + "Invalid save parameters.");
             }
@@ -92,7 +89,7 @@ public class ProcessCommandQueries {
     public static void handleLoadEntities(String[] parts) {
         try {
             if (parts.length >= 3 && "users".equalsIgnoreCase(parts[2])) {
-                String persons = SaveEntityManager.getAllPersons();
+                String persons = SaveEntityManagerPostgresql.getAllPersons();
                 System.out.println(persons);
             } else {
                 throw new ParamLengthException();
@@ -124,7 +121,7 @@ public class ProcessCommandQueries {
             }
 
             if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
-                SaveEntity user = SaveEntityManager.getPerson(entity.getId());
+                SaveEntity user = SaveEntityManagerPostgresql.getPerson(entity.getId());
                 if (user != null) {System.out.println(VALID_MESSAGE + "User found: " + user);}
                 else {System.out.println(INVALID_MESSAGE + "User not found.");}
             }
@@ -145,7 +142,7 @@ public class ProcessCommandQueries {
             int newPort = Integer.parseInt(parts[1].split(":")[1]);
             if (newPort < 1024 || newPort > 65535) {throw new HandleChangePortException();}
 
-            ConnectToPostgresSQL.changePort(newPort);
+            ConnectToPostgresql.changePort(newPort);
 
         } catch (ParamLengthException | HandleChangePortException e) { System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
         } catch (Exception e) { System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
@@ -194,8 +191,8 @@ public class ProcessCommandQueries {
             }
 
             if (connectionEntity.getUsername() != null && connectionEntity.getDatabase() != null) {
-                ConnectToPostgresSQL.connection.close();
-                SaveEntityManager.cloneUser(entity.getId());
+                ConnectToPostgresql.connection.close();
+                SaveEntityManagerPostgresql.cloneUser(entity.getId());
             }
             else {throw new handleForceUserLoadAndConnectException(connectionEntity.getDatabase());}
         } catch (ParamLengthException | handleForceUserLoadAndConnectException | SQLException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());

@@ -22,7 +22,14 @@ public class Info {
         this.databaseName = databaseName;
     }
 
-    public static String getBaseUrl() {
+    public static String getBaseUrlForPostgresql() {
         return "jdbc:" + info.getDatabaseName() + "://localhost:" + info.getPORT() + "/";
     }
+
+   // jdbc:mysql://localhost:3306/mydatabase
+
+    public static String getBaseUrlForMysql() {
+        return "jdbc:mysql://localhost:3306/";
+    }
+
 }
