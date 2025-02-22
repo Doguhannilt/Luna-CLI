@@ -9,15 +9,15 @@ import org.cli.exceptions.ParamLengthException;
 import org.cli.exceptions.handleForceUserLoadAndConnectException;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
 import static org.cli.manager.CommandPackage.connectionEntity;
 import static org.cli.manager.CommandPackage.saveEntity;
+import static org.cli.sql.postgresql.QueriesPostgresql.exportToCSV;
 import static org.cli.sql.postgresql.QueriesPostgresql.scheduleWithCommand;
+import static org.cli.utils.ExportPath.filePath;
 
 public class ProcessCommandQueriesPostgresql {
     public static String dbType;
@@ -251,7 +251,7 @@ public class ProcessCommandQueriesPostgresql {
      *   <li>{@code command:update users set city=LosAngeles where name=John delay:15 unit:2}</li>
      * </ul>
      */
-    public static void HandleSchedulerAndSchedule(String[] parts) {
+    public static void handleSchedulerAndSchedule(String[] parts) {
         try {
             if (parts.length < 4) {throw new ParamLengthException();}
 
@@ -284,5 +284,45 @@ public class ProcessCommandQueriesPostgresql {
 
         catch (ParamLengthException e) {throw new RuntimeException(e);}
         catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
+    }
+
+    public static void handleExportToCsv(String[] parts) {
+        try {
+            if (parts.length < 3) {throw new ParamLengthException();}
+            StringBuilder commandBuilder = new StringBuilder();
+            String export = null;
+            boolean isCommand = false;
+
+
+
+            for (String param : parts) {
+                if (param.startsWith("command:")) {
+                    isCommand = true;
+                    commandBuilder.append(param.substring(8)).append(" ");
+                }
+                else if (param.startsWith("export:")) {
+                    export = param.substring(7);
+                    isCommand = false;
+                }
+                else if (isCommand) { commandBuilder.append(param).append(" ");}
+            }
+
+            String getCommand = commandBuilder.toString().trim();
+            if (getCommand.isEmpty() || export.isEmpty()) {throw new ParamLengthException();}
+
+            System.out.println("Export: " + export);
+            System.out.println("Commands: " + getCommand);
+
+            /*
+            * ExportPath.java
+            * public static String documentsPath = System.getProperty("user.home");
+            * public static String filePath = documentsPath;
+            * */
+
+            String filePathGivenByUser = filePath + export;
+            exportToCSV(getCommand, filePathGivenByUser);
+        }
+
+        catch (ParamLengthException e) {throw new RuntimeException(e);}
     }
 }

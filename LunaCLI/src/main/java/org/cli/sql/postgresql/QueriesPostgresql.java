@@ -3,6 +3,8 @@ import static org.cli.utils.Colors.*;
 
 import org.cli.conn.postgresql.ConnectToPostgresql;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -232,5 +234,62 @@ public class QueriesPostgresql {
             }
         }
         System.out.println(separator);
+    }
+
+    /**
+     * <h1>Export Your Data To CSV</h1>
+     * <p>
+     * This method exports the data retrieved from the provided SQL query to a CSV file.
+     * It executes a standard SQL query (e.g., SELECT) and writes the resulting data
+     * to a CSV file at the specified location.
+     * </p>
+     * <p>
+     * <strong>Parameters:</strong>
+     * </p>
+     * <ul>
+     *     <li><strong>getCommand</strong> - A valid SQL query string (e.g., "SELECT * FROM table_name")
+     *     that retrieves data from the database.</li>
+     *     <li><strong>Export</strong> - The file path where the resulting data will be saved as a CSV file.</li>
+     * </ul>
+     * <p>
+     * <strong>Usage:</strong>
+     * This method is intended to be used with standard SQL queries and not with custom commands
+     * like "select-from" or "insert-into". It operates with typical SQL queries to fetch data
+     * and store it in CSV format, ensuring ease of use and compatibility.
+     * </p>
+     * <p>
+     * <strong>Note:</strong>
+     * The method expects a well-formed SQL query and a valid file path. Errors will be thrown if
+     * there are issues with the SQL execution or file writing process.
+     * </p>
+     */
+
+    public static void exportToCSV(String getCommand, String filePath) {
+        try {
+            Statement stmt = ConnectToPostgresql.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(getCommand);
+
+            try (FileWriter writer = new FileWriter(filePath)) {
+
+
+                int columnCount = rs.getMetaData().getColumnCount();
+                for (int i = 1; i <= columnCount; i++) {
+                    writer.append(rs.getMetaData().getColumnName(i)).append(",");
+                }
+                writer.append("\n");
+
+                while (rs.next()) {
+                    for (int i = 1; i <= columnCount; i++) {
+                        writer.append(rs.getString(i)).append(",");
+                    }
+                    writer.append("\n");
+                }
+
+                System.out.println(GREEN + "Data successfully exported to " + filePath + RESET);
+        }
+            catch (SQLException e) {throw new RuntimeException(e);}
+    }
+        catch (SQLException e) {throw new RuntimeException(e);}
+        catch (IOException e) {throw new RuntimeException(e);}
     }
 }

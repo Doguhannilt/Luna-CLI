@@ -18,7 +18,7 @@ public class CommandPackage {
     static public SaveEntity saveEntity = new SaveEntity();
 
     /**
-     * Parses and executes the given command for database operations.
+     * <p>Parses and executes the given command for database operations.</p>
      *
      * @param command The command input by the user.
      * @throws SQLException If a database access error occurs.
@@ -41,7 +41,7 @@ public class CommandPackage {
     }
 
     /**
-     * Handles commands that start with "luna".
+     * <h1>Handles commands that start with "luna".</h1>
      *
      * @param subCommand The second word in the command string.
      * @param parts      The split command array.
@@ -71,7 +71,10 @@ public class CommandPackage {
                 handleForceUserLoadAndConnect(parts);
                 break;
             case "schedule":
-                HandleSchedulerAndSchedule(parts);
+                handleSchedulerAndSchedule(parts);
+                break;
+            case "out":
+                handleExportToCsv(parts);
                 break;
             default:
                 if (ConnectToPostgresql.isConnected()) {
@@ -83,3 +86,5 @@ public class CommandPackage {
         }
     }
 }
+// luna connect postgresql username:postgres password:postgres database:managify
+// luna out command:select * from users export:exported_data.csv
