@@ -366,6 +366,10 @@ public class QueriesPostgresql {
         System.out.println("- delete-from <table_name> [condition]: Delete data from a table.");
         System.out.println("- backup-database <file_path>: Backup the database.");
         System.out.println("- restore-database <file_path>: Restore the database.");
+		System.out.println("- history: Display all past commands");
+		System.out.println("- schedule command:<query> delay:<delay> unit:<unit>");		
+		System.out.println("- export command:<query> filepath:<filepath>");
+		System.out.println("- execute filepath:<sqlFile>");
         System.out.println(RED + "- help: Show this help message." + RESET);
         System.out.println("-----------------------------------------------------");
         System.out.println(GREEN + "ENTITY MANAGER" + RESET);
@@ -481,6 +485,7 @@ public class QueriesPostgresql {
         catch (SQLException e) {throw new RuntimeException(e);}
         catch (IOException e) {throw new RuntimeException(e);}
     }
+	
     /**
      * <h2>Execute SQL File</h2>
      * This method reads an SQL file line by line and executes the SQL statements on a PostgreSQL database.
