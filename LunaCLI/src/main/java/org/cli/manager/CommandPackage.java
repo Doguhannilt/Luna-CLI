@@ -12,8 +12,6 @@ import static org.cli.sql.postgresql.ProcessCommandQueriesPostgresql.*;
 
 public class CommandPackage {
 
-    // luna connect postgresql username:postgres password:postgres database:managify
-
     static public ConnectionEntity connectionEntity = new ConnectionEntity();
     static public SaveEntity saveEntity = new SaveEntity();
 
