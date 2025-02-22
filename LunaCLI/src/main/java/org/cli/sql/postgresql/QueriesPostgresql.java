@@ -4,6 +4,8 @@ import static org.cli.utils.Colors.*;
 import org.cli.conn.postgresql.ConnectToPostgresql;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.cli.sql.postgresql.ExecutePostgresql.command;
 
@@ -77,36 +79,49 @@ public class QueriesPostgresql {
 
     public static void selectFrom(String tableName, String condition) {
         String sql = "SELECT * FROM " + tableName + (condition.isEmpty() ? "" : " WHERE " + condition);
-        System.out.println(tableName);
-        System.out.println(condition);
-        try (Statement statement = ConnectToPostgresql.connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
 
-            if (!resultSet.next()) {
-                System.out.println("No data found in the table.");
-                return;
-            }
+
+        /*
+        * Print Table
+        */
+        try (Statement statement = ConnectToPostgresql.connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
 
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
 
-            for (int i = 1; i <= columnCount; i++) {
-                System.out.print(metaData.getColumnName(i) + "\t");
-            }
-            System.out.println("\n-----------------------------------");
+            List<String[]> rows = new ArrayList<>();
+            int[] columnWidths = new int[columnCount];
 
-            do {
-                for (int i = 1; i <= columnCount; i++) {
-                    System.out.print(resultSet.getString(i) + "\t");
+            String[] headers = new String[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                headers[i] = metaData.getColumnName(i + 1);
+                columnWidths[i] = headers[i].length();
+            }
+            rows.add(headers);
+
+            while (resultSet.next()) {
+                String[] row = new String[columnCount];
+                for (int i = 0; i < columnCount; i++) {
+                    row[i] = resultSet.getString(i + 1);
+                    if (row[i] == null) row[i] = "NULL"; // Null değerleri yönet
+                    columnWidths[i] = Math.max(columnWidths[i], row[i].length());
                 }
-                System.out.println();
-            } while (resultSet.next());
+                rows.add(row);
+            }
+
+            if (rows.size() == 1) {
+                System.out.println("No data found in the table.");
+                return;
+            }
+
+            printTable(rows, columnWidths);
 
         } catch (SQLException e) {
             System.out.println("SQL Execution Error: " + e.getMessage());
         }
     }
-
+    
     public static void update(String tableName, String setClause, String condition) {
         String sql = "UPDATE " + tableName + " SET " + setClause + (condition.isEmpty() ? "" : " WHERE " + condition);
         command(sql);
@@ -127,7 +142,7 @@ public class QueriesPostgresql {
         executeSystemCommand(sql);
     }
 
-    private static void executeSystemCommand(String command) {
+    public static void executeSystemCommand(String command) {
         try {
             Process process = Runtime.getRuntime().exec(command);
             int exitCode = process.waitFor();
@@ -166,5 +181,25 @@ public class QueriesPostgresql {
         System.out.println("- load users | Display all users");
         System.out.println("- force user:<EntityId> | Get user by Id");
         System.out.println("- clone user:<EntityId> | Connect a cloned user");
+    }
+
+    private static void printTable(List<String[]> rows, int[] columnWidths) {
+        StringBuilder separator = new StringBuilder("+");
+
+        for (int width : columnWidths) {separator.append("-".repeat(width + 2)).append("+");}
+        System.out.println(separator);
+
+        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
+            String[] row = rows.get(rowIndex);
+            System.out.print("|");
+            for (int i = 0; i < row.length; i++) {
+                System.out.printf(" %-"+columnWidths[i]+"s |", row[i]);
+            }
+            System.out.println();
+            if (rowIndex == 0) {
+                System.out.println(separator);
+            }
+        }
+        System.out.println(separator);
     }
 }
