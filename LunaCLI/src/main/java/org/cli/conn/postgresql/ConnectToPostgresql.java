@@ -1,6 +1,6 @@
 package org.cli.conn.postgresql;
 
-import org.cli.sql.Info;
+import org.cli.entities.Info;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
-import static org.cli.sql.Info.getBaseUrlForPostgresql;
+import static org.cli.entities.Info.getBaseUrlForPostgresql;
 
 
 public class ConnectToPostgresql {
