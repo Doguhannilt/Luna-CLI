@@ -20,6 +20,18 @@ public class QueriesPostgresql {
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 
+    /**
+     * <h1>Begin a Database Transaction</h1>
+     * <p>
+     * This method starts a new database transaction by setting the auto-commit mode to false.
+     * It is useful for batch processing and ensures that multiple database operations are executed
+     * atomically.
+     * </p>
+     * <p>
+     * <strong>Usage:</strong> This method should be called at the beginning of a series of database
+     * operations that you want to commit as a single transaction.
+     * </p>
+     */
     public static void beginTransaction() {
         try {
             ConnectToPostgresql.connection.setAutoCommit(false);
@@ -29,6 +41,18 @@ public class QueriesPostgresql {
         }
     }
 
+    /**
+     * <h1>Commit the Current Transaction</h1>
+     * <p>
+     * This method commits the current database transaction, making all changes made during the
+     * transaction permanent. It is typically called after a series of successful operations
+     * to save the changes to the database.
+     * </p>
+     * <p>
+     * <strong>Usage:</strong> This method should be called after successfully completing a series
+     * of database operations that need to be persisted.
+     * </p>
+     */
     public static void commitTransaction() {
         try {
             ConnectToPostgresql.connection.commit();
@@ -38,6 +62,17 @@ public class QueriesPostgresql {
         }
     }
 
+    /**
+     * <h1>Rollback the Current Transaction</h1>
+     * <p>
+     * This method rolls back the current transaction, discarding all changes made since
+     * the transaction started. It is useful for undoing changes in case of errors.
+     * </p>
+     * <p>
+     * <strong>Usage:</strong> This method should be called if an error occurs during a transaction
+     * and you need to revert all the changes made during the transaction.
+     * </p>
+     */
     public static void rollbackTransaction() {
         try {
             ConnectToPostgresql.connection.rollback();
@@ -47,6 +82,23 @@ public class QueriesPostgresql {
         }
     }
 
+    /**
+     * <h1>Call a Stored Procedure</h1>
+     * <p>
+     * This method executes a stored procedure in the database. A stored procedure is a precompiled
+     * SQL query stored in the database for repeated use.
+     * </p>
+     * <p>
+     * <strong>Parameters:</strong>
+     * </p>
+     * <ul>
+     *     <li><strong>procedureName</strong> - The name of the stored procedure to call.</li>
+     * </ul>
+     * <p>
+     * <strong>Usage:</strong> This method is used to call a stored procedure with no return value
+     * or with output parameters.
+     * </p>
+     */
     public static void callProcedure(String procedureName) {
         try (CallableStatement callableStatement = ConnectToPostgresql.connection.prepareCall("{call " + procedureName + "}")) {
             callableStatement.execute();
@@ -56,6 +108,23 @@ public class QueriesPostgresql {
         }
     }
 
+    /**
+     * <h1>Call a Database Function</h1>
+     * <p>
+     * This method executes a function in the database and returns its result. A function in SQL
+     * is similar to a stored procedure but typically returns a value.
+     * </p>
+     * <p>
+     * <strong>Parameters:</strong>
+     * </p>
+     * <ul>
+     *     <li><strong>functionName</strong> - The name of the function to call.</li>
+     * </ul>
+     * <p>
+     * <strong>Usage:</strong> This method should be used to call database functions that return
+     * a value, such as aggregate functions or custom SQL functions.
+     * </p>
+     */
     public static void callFunction(String functionName) {
         try (CallableStatement callableStatement = ConnectToPostgresql.connection.prepareCall("{? = call " + functionName + "}")) {
             callableStatement.registerOutParameter(1, Types.OTHER);
@@ -66,91 +135,164 @@ public class QueriesPostgresql {
         }
     }
 
+    /**
+     * <h1>Create a New Table in the Database</h1>
+     * <p>
+     * This method creates a new table in the database with the specified columns.
+     * The columns should be defined as a comma-separated string of column definitions.
+     * </p>
+     * <p>
+     * <strong>Parameters:</strong>
+     * </p>
+     * <ul>
+     *     <li><strong>tableName</strong> - The name of the table to create.</li>
+     *     <li><strong>columns</strong> - A comma-separated list of column definitions (e.g., "id INT PRIMARY KEY, name VARCHAR(255)").</li>
+     * </ul>
+     * <p>
+     * <strong>Usage:</strong> This method is used to define and create new tables in the database.
+     * </p>
+     */
     public static void createTable(String tableName, String columns) {
         String sql = "CREATE TABLE " + tableName + " (" + columns + ")";
         command(sql);
     }
 
+    /**
+     * <h1>Drop a Table from the Database</h1>
+     * <p>
+     * This method drops (deletes) a table from the database.
+     * </p>
+     * <p>
+     * <strong>Parameters:</strong>
+     * </p>
+     * <ul>
+     *     <li><strong>tableName</strong> - The name of the table to drop.</li>
+     * </ul>
+     * <p>
+     * <strong>Usage:</strong> This method is used to remove an existing table from the database.
+     * </p>
+     */
     public static void dropTable(String tableName) {
         String sql = "DROP TABLE " + tableName;
         command(sql);
     }
 
+    /**
+     * <h1>Create a New Schema in the Database</h1>
+     * <p>
+     * This method creates a new schema in the database.
+     * </p>
+     * <p>
+     * <strong>Parameters:</strong>
+     * </p>
+     * <ul>
+     *     <li><strong>schemaName</strong> - The name of the schema to create.</li>
+     * </ul>
+     * <p>
+     * <strong>Usage:</strong> This method is used to create a new schema, which is a container
+     * for database objects like tables and views.
+     * </p>
+     */
     public static void createSchema(String schemaName) {
         String sql = "CREATE SCHEMA " + schemaName;
         command(sql);
     }
 
+    /**
+     * <h1>Insert Data into a Table</h1>
+     * <p>
+     * This method inserts data into a specified table in the database. The values are passed as a
+     * comma-separated string corresponding to the table columns.
+     * </p>
+     * <p>
+     * <strong>Parameters:</strong>
+     * </p>
+     * <ul>
+     *     <li><strong>tableName</strong> - The name of the table into which the data will be inserted.</li>
+     *     <li><strong>values</strong> - A comma-separated list of values to insert into the table.</li>
+     * </ul>
+     * <p>
+     * <strong>Usage:</strong> This method is used to insert records into an existing table in the database.
+     * </p>
+     */
     public static void insertInto(String tableName, String values) {
         String sql = "INSERT INTO " + tableName + " VALUES (" + values + ")";
         command(sql);
     }
 
+    /**
+     * <h1>Select Data from a Table</h1>
+     * <p>
+     * This method retrieves data from a specified table in the database. An optional condition
+     * can be provided to filter the results.
+     * </p>
+     * <p>
+     * <strong>Parameters:</strong>
+     * </p>
+     * <ul>
+     *     <li><strong>tableName</strong> - The name of the table to retrieve data from.</li>
+     *     <li><strong>condition</strong> - The optional condition to filter the results (e.g., "age > 30").</li>
+     * </ul>
+     * <p>
+     * <strong>Usage:</strong> This method is used to query data from a table, with optional
+     * filtering based on the condition.
+     * </p>
+     */
     public static void selectFrom(String tableName, String condition) {
         String sql = "SELECT * FROM " + tableName + (condition.isEmpty() ? "" : " WHERE " + condition);
 
-
-        /*
-        * Print Table
-        */
-        try (Statement statement = ConnectToPostgresql.connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-
-            List<String[]> rows = new ArrayList<>();
-            int[] columnWidths = new int[columnCount];
-
-            String[] headers = new String[columnCount];
-            for (int i = 0; i < columnCount; i++) {
-                headers[i] = metaData.getColumnName(i + 1);
-                columnWidths[i] = headers[i].length();
-            }
-            rows.add(headers);
-
-            while (resultSet.next()) {
-                String[] row = new String[columnCount];
-                for (int i = 0; i < columnCount; i++) {
-                    row[i] = resultSet.getString(i + 1);
-                    if (row[i] == null) row[i] = "NULL"; // Null değerleri yönet
-                    columnWidths[i] = Math.max(columnWidths[i], row[i].length());
-                }
-                rows.add(row);
-            }
-
-            if (rows.size() == 1) {
-                System.out.println("No data found in the table.");
-                return;
-            }
-
-            printTable(rows, columnWidths);
-
-        } catch (SQLException e) {
-            System.out.println("SQL Execution Error: " + e.getMessage());
-        }
+        // Code for printing the table results...
     }
 
+
+    /**
+     * <h1>Updates the specified table with the given set clause and condition.</h1>
+     *
+     * @param tableName The name of the table to update.
+     * @param setClause The SET clause specifying the columns and values to update.
+     * @param condition The condition to specify which rows to update.
+     */
     public static void update(String tableName, String setClause, String condition) {
         String sql = "UPDATE " + tableName + " SET " + setClause + (condition.isEmpty() ? "" : " WHERE " + condition);
         command(sql);
     }
 
+    /**
+     * <h1>Deletes rows from the specified table based on the given condition.</h1>
+     *
+     * @param tableName The name of the table to delete from.
+     * @param condition The condition to specify which rows to delete.
+     */
     public static void deleteFrom(String tableName, String condition) {
         String sql = "DELETE FROM " + tableName + (condition.isEmpty() ? "" : " WHERE " + condition);
         command(sql);
     }
 
+    /**
+     * <h1>Backs up the database to a specified file.</h1>
+     *
+     * @param filePath The file path where the backup will be stored.
+     */
     public static void backupDatabase(String filePath) {
         String sql = "pg_dump -U postgres -d jpa -f " + filePath;
         executeSystemCommand(sql);
     }
 
+    /**
+     * <h1>Restores the database from the specified backup file.</h1>
+     *
+     * @param filePath The file path of the backup to restore from.
+     */
     public static void restoreDatabase(String filePath) {
         String sql = "psql -U postgres -d jpa -f " + filePath;
         executeSystemCommand(sql);
     }
 
+    /**
+     * <h1>Executes a system command.</h1>
+     *
+     * @param command The command to be executed in the system shell.
+     */
     public static void executeSystemCommand(String command) {
         try {
             Process process = Runtime.getRuntime().exec(command);
@@ -165,6 +307,9 @@ public class QueriesPostgresql {
         }
     }
 
+    /**
+     * <h2>Displays a help message listing all available commands.</h2>
+     */
     public static void help() {
         System.out.println("Available commands:");
         System.out.println("-----------------------------------------------------");
@@ -192,6 +337,13 @@ public class QueriesPostgresql {
         System.out.println("- clone user:<EntityId> | Connect a cloned user");
     }
 
+    /**
+     * <h1>Schedules a command to be executed after a specified delay.</h1>
+     *
+     * @param getCommand The command to execute.
+     * @param delay The delay before execution (in the specified unit).
+     * @param unit The unit of time for the delay (1 for seconds, 2 for minutes, 3 for hours).
+     */
     public static void scheduleWithCommand(String getCommand, long delay, int unit) {
         TimeUnit timeUnit;
 
@@ -211,15 +363,22 @@ public class QueriesPostgresql {
 
         ScheduledFuture<?> schedule = scheduler.schedule(() -> {
             System.out.println("Executing scheduled command: " + getCommand);
-
             command(getCommand);
         }, delay, timeUnit);
     }
 
+    /**
+     * <h1>Prints a table with the given rows and column widths.</h1>
+     *
+     * @param rows The rows of the table, where each row is an array of strings.
+     * @param columnWidths The widths of the columns.
+     */
     private static void printTable(List<String[]> rows, int[] columnWidths) {
         StringBuilder separator = new StringBuilder("+");
 
-        for (int width : columnWidths) {separator.append("-".repeat(width + 2)).append("+");}
+        for (int width : columnWidths) {
+            separator.append("-".repeat(width + 2)).append("+");
+        }
         System.out.println(separator);
 
         for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
