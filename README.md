@@ -44,7 +44,7 @@ Use the following command to connect:
 ```
 Example:
 ```sh
- luna connect postgresql username:admin password:1234 database:mydb
+ luna connect postgresql username:postgres password:postgres database:managify
 ```
 ![cnn](https://github.com/user-attachments/assets/3aa3ec69-b005-4f13-8d6e-8062adf6a757)
 
