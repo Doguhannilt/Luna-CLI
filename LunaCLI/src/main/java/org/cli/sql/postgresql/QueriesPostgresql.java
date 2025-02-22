@@ -6,10 +6,17 @@ import org.cli.conn.postgresql.ConnectToPostgresql;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 
 import static org.cli.sql.postgresql.ExecutePostgresql.command;
 
 public class QueriesPostgresql {
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
 
     public static void beginTransaction() {
         try {
@@ -121,7 +128,7 @@ public class QueriesPostgresql {
             System.out.println("SQL Execution Error: " + e.getMessage());
         }
     }
-    
+
     public static void update(String tableName, String setClause, String condition) {
         String sql = "UPDATE " + tableName + " SET " + setClause + (condition.isEmpty() ? "" : " WHERE " + condition);
         command(sql);
@@ -181,6 +188,30 @@ public class QueriesPostgresql {
         System.out.println("- load users | Display all users");
         System.out.println("- force user:<EntityId> | Get user by Id");
         System.out.println("- clone user:<EntityId> | Connect a cloned user");
+    }
+
+    public static void scheduleWithCommand(String getCommand, long delay, int unit) {
+        TimeUnit timeUnit;
+
+        switch (unit) {
+            case 1:
+                timeUnit = TimeUnit.SECONDS;
+                break;
+            case 2:
+                timeUnit = TimeUnit.MINUTES;
+                break;
+            case 3:
+                timeUnit = TimeUnit.HOURS;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid time unit. Use 1 (Seconds), 2 (Minutes), or 3 (Hours).");
+        }
+
+        ScheduledFuture<?> schedule = scheduler.schedule(() -> {
+            System.out.println("Executing scheduled command: " + getCommand);
+
+            command(getCommand);
+        }, delay, timeUnit);
     }
 
     private static void printTable(List<String[]> rows, int[] columnWidths) {

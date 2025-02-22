@@ -9,15 +9,19 @@ import org.cli.exceptions.ParamLengthException;
 import org.cli.exceptions.handleForceUserLoadAndConnectException;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
 import static org.cli.manager.CommandPackage.connectionEntity;
 import static org.cli.manager.CommandPackage.saveEntity;
+import static org.cli.sql.postgresql.QueriesPostgresql.scheduleWithCommand;
 
 public class ProcessCommandQueriesPostgresql {
     public static String dbType;
+
     /**
      * Handles database connection commands.
      *
@@ -169,7 +173,7 @@ public class ProcessCommandQueriesPostgresql {
     }
 
     /**
-     * Connect your saved clone entity.
+     * <h1>Connect your saved clone entity.</h1>
      *
      * @param parts The split command array.
      */
@@ -197,5 +201,88 @@ public class ProcessCommandQueriesPostgresql {
             else {throw new handleForceUserLoadAndConnectException(connectionEntity.getDatabase());}
         } catch (ParamLengthException | handleForceUserLoadAndConnectException | SQLException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
         } catch (Exception e) { System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
+    }
+
+
+    /**
+     * <h1>Schedule Your Command</h1>
+     * <p>
+     * This method schedules a command to be executed after a specified delay.
+     * </p>
+     *
+     * <h2>Example Command Line Input:</h2>
+     * <pre>
+     * {@code
+     * luna schedule command:insert-into users name:John age:25 city:NewYork delay:10 unit:1
+     * }
+     * </pre>
+     *
+     * <h2>Explanations:</h2>
+     * <ol>
+     *   <li><b>{@code command:}</b> - Specifies the start of the command. In this example, the part {@code insert-into users name:John age:25 city:NewYork} will be treated as the command.</li>
+     *   <li><b>{@code delay:}</b> - Specifies the delay before the command is executed. In this example, the delay is {@code 10} units.</li>
+     *   <li><b>{@code unit:}</b> - Specifies the unit of the delay. In this example, the unit is {@code 1}.</li>
+     * </ol>
+     *
+     * <h2>How It Works:</h2>
+     * <ul>
+     *   <li>The method extracts everything after {@code command:} until it encounters {@code delay:} and treats it as the command.</li>
+     *   <li>The {@code delay:} and {@code unit:} values are extracted separately.</li>
+     *   <li>The command, delay, and unit are then passed to the {@code scheduleWithCommand} method for execution.</li>
+     * </ul>
+     *
+     * <h2>Expected Output:</h2>
+     * <pre>
+     * {@code
+     * Executing scheduled command: insert-into users name:John age:25 city:NewYork
+     * }
+     * </pre>
+     *
+     * <p>
+     * This command will be executed after a delay of {@code 10} units (as specified by {@code delay:10 unit:1}).
+     * </p>
+     *
+     * <h2>Flexibility:</h2>
+     * <p>
+     * This approach allows you to schedule any type of command, not just {@code select}. For example:
+     * </p>
+     * <ul>
+     *   <li>{@code command:delete-from users where age > 30 delay:5 unit:1}</li>
+     *   <li>{@code command:update users set city=LosAngeles where name=John delay:15 unit:2}</li>
+     * </ul>
+     */
+    public static void HandleSchedulerAndSchedule(String[] parts) {
+        try {
+            if (parts.length < 4) {throw new ParamLengthException();}
+
+            StringBuilder commandBuilder = new StringBuilder();
+            int delay = 0;
+            int unit = 0;
+            boolean isCommand = false;
+
+            for (String param : parts) {
+                if (param.startsWith("command:")) {
+                    isCommand = true;
+                    commandBuilder.append(param.substring(8)).append(" ");
+                } else if (param.startsWith("delay:")) {
+                    delay = Integer.parseInt(param.substring(6));
+                    isCommand = false;
+                } else if (param.startsWith("unit:")) {
+                    unit = Integer.parseInt(param.substring(5));
+                    isCommand = false;
+                } else if (isCommand) {
+                    commandBuilder.append(param).append(" ");
+                }
+            }
+
+            String command = commandBuilder.toString().trim();
+
+            if (command.isEmpty() || delay == 0 || unit == 0) {throw new ParamLengthException();}
+
+            scheduleWithCommand(command, delay, unit);
+        }
+
+        catch (ParamLengthException e) {throw new RuntimeException(e);}
+        catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
 }
