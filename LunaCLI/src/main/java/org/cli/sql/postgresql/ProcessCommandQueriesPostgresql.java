@@ -286,6 +286,34 @@ public class ProcessCommandQueriesPostgresql {
         catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
 
+
+    /**
+     * <h1>Export Your Data</h1>
+     * <p>
+     * This method export your data by given query.
+     * </p>
+     *
+     * <h2>Example Command Line Input:</h2>
+     * <pre>
+     * {@code
+     * luna export command:select * from user export:data.csv
+     * }
+     * </pre>
+     *
+     * <h2>Explanations:</h2>
+     * <ol>
+     *   <li><b>{@code command:}</b> - Specifies the start of the command. In this example, the part {@code select * from user} will be treated as the command.</li>
+     *   <li><b>{@code export:}</b> - Specifies the location before the command is executed. In this example, the location that your '.csv' file saved is {@code C:\Users\(?)\fileName_data.csv}</li>
+     * </ol>
+     *
+     *
+     * <h2>Expected Output:</h2>
+     * <pre>
+     * {@code
+     * Data successfully exported to C:\Users\yourFolderName/exported_data.csv
+     * }
+     * </pre>
+     */
     public static void handleExportToCsv(String[] parts) {
         try {
             if (parts.length < 3) {throw new ParamLengthException();}
