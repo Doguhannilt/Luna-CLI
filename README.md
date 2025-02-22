@@ -10,6 +10,72 @@ LunaCLI is a command-line tool designed to interact with POSTGRESQL. It allows u
 - Supports various database operations like transactions, table management, and schema creation.
 - Create an entity and clone it to connect to the terminal.
 
+## **Some features that I've been working on**  
+
+LunaCLI is evolving! I am excited to introduce the following upcoming features to enhance usability and efficiency:  
+
+### **📊 Display Query Results in Table Format**  
+- Query results will now be displayed in a structured table format for better readability.  
+- Example:  
+  ```
+  +----+---------+-----------------+
+  | ID |  Name   | Email           |
+  +----+---------+-----------------+
+  |  1 |  Alice  | alice@mail.com  |
+  |  2 |  Bob    | bob@mail.com    |
+  +----+---------+-----------------+
+  ```  
+
+### **📜 History Command**  
+- View previously executed commands with the `history` command.  
+- Example:  
+  ```
+  $ history
+  1. select-from users
+  2. insert-into orders (1, "Laptop", 5000)
+  3. update users set name="John" where id=2
+  ```
+- Easily re-execute a command using `!<command_number>`.  
+  ```
+  $ !2  # Runs "insert-into orders (1, 'Laptop', 5000)"
+  ```
+
+### **⏳ Scheduled Command Execution**  
+- Schedule recurring SQL commands to run automatically.  
+- Example:  
+  ```
+  $ schedule run "delete-from logs where created_at < NOW() - interval '7 days'" daily at 02:00
+  ```
+- Supports scheduling backups and routine maintenance tasks.  
+
+### **📂 Execute SQL Files**  
+- Run `.sql` files directly from LunaCLI.  
+- Example:  
+  ```
+  $ execute-file schema.sql
+  ```
+- Ideal for batch execution of SQL scripts.  
+
+### **📤 Export Table Data to JSON & CSV**  
+- Save query results as JSON or CSV files.  
+- Example:  
+  ```
+  $ export users format:json
+  ```
+  ```
+  $ export orders format:csv
+  ```
+
+### **📈 Basic Graph Support**  
+- Visualize query results with simple terminal-based graphs.  
+- Example:  
+  ```
+  $ visualize select count(*) from orders group by category
+  ```
+- Helps in quick data analysis and trend identification.  
+
+
+
 ## Prerequisites
 Before running LunaCLI, ensure you have the following installed:
 - **Java 17 or higher**
