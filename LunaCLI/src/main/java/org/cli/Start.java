@@ -38,7 +38,7 @@ public class Start {
      * @throws HandleChangePortException If an error occurs while attempting to change the port.
      * @throws handleForceUserLoadAndConnectException If an error occurs while forcing a user load and connection.
      */
-    public static void commandStart() throws SQLException, ParamLengthException, HandleChangePortException, handleForceUserLoadAndConnectException {
+    public static void commandStart() throws SQLException {
 
         Scanner scanner = new Scanner(System.in);
 

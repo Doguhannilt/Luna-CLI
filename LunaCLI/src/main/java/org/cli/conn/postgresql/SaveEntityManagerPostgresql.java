@@ -44,7 +44,6 @@ public class SaveEntityManagerPostgresql {
         saveConnections(connections);
         System.out.println("User saved: " + saveEntity.getId());
     }
-
     /**
      * Loads the list of connections from the file specified by the {@link ConnectionPath#FILE_PATH}.
      * <p>
@@ -68,7 +67,6 @@ public class SaveEntityManagerPostgresql {
             return new ArrayList<>();
         }
     }
-
     /**
      * Saves the list of connections to the file specified by the {@link ConnectionPath#FILE_PATH}.
      * <p>
@@ -86,7 +84,6 @@ public class SaveEntityManagerPostgresql {
             e.printStackTrace();
         }
     }
-
     /**
      * Retrieves a string representation of all saved persons (connections).
      * <p>
@@ -110,7 +107,6 @@ public class SaveEntityManagerPostgresql {
 
         return connections.toString();
     }
-
     /**
      * Retrieves a person (SaveEntity) by their unique ID.
      * <p>
@@ -137,7 +133,6 @@ public class SaveEntityManagerPostgresql {
         }
         return null;
     }
-
     /**
      * Clones a user by establishing a connection to their respective database.
      * <p>

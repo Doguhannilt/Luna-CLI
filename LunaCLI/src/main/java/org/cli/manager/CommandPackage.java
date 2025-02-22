@@ -37,7 +37,6 @@ public class CommandPackage {
                 System.out.println(INVALID_MESSAGE + "Invalid Command");
         }
     }
-
     /**
      * <h1>Handles commands that start with "luna".</h1>
      *
@@ -87,5 +86,3 @@ public class CommandPackage {
         }
     }
 }
-// luna connect postgresql username:postgres password:postgres database:managify
-// luna out command:select * from users export:exported_data.csv

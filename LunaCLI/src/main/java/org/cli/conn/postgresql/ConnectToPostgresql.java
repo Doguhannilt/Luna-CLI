@@ -33,8 +33,6 @@ public class ConnectToPostgresql {
             return false;
         }
     }
-
-
     /**
      * Changes the port number for the database connection.
      * <p>
@@ -56,7 +54,6 @@ public class ConnectToPostgresql {
             return;
         }
     }
-
     /**
      * Displays the current database connection information.
      * <p>
@@ -82,7 +79,6 @@ public class ConnectToPostgresql {
                 Connection Status: %s
                 %n""" ,info.getDatabaseName(), info.getPORT(), getBaseUrlForPostgresql(), (connection != null && !connection.isClosed() ? "Connected" : "Not Connected"));
     }
-
     /**
      * Establishes a connection to the specified PostgreSQL database using the provided credentials.
      * <p>
@@ -109,7 +105,6 @@ public class ConnectToPostgresql {
         }
         catch (SQLException e) {System.out.println(INVALID_MESSAGE + "Connection Error: " + e.getMessage());}
     }
-
     /**
      * Closes the current active database connection.
      * <p>

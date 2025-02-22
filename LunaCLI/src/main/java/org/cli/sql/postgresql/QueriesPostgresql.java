@@ -432,35 +432,27 @@ public class QueriesPostgresql {
         }
         System.out.println(separator);
     }
-
     /**
-     * <h1>Export Your Data To CSV</h1>
+     * Exports data retrieved from the database to a CSV file.
      * <p>
-     * This method exports the data retrieved from the provided SQL query to a CSV file.
-     * It executes a standard SQL query (e.g., SELECT) and writes the resulting data
-     * to a CSV file at the specified location.
+     * This method executes the given SQL query command, retrieves the result set,
+     * and writes the data to a CSV file at the specified file path. Each column
+     * in the result set is written as a header in the CSV, followed by the
+     * corresponding data for each row.
      * </p>
+     *
      * <p>
-     * <strong>Parameters:</strong>
+     * If an error occurs while executing the SQL query, or while writing the
+     * file, a {@link RuntimeException} is thrown with the cause.
      * </p>
-     * <ul>
-     *     <li><strong>getCommand</strong> - A valid SQL query string (e.g., "SELECT * FROM table_name")
-     *     that retrieves data from the database.</li>
-     *     <li><strong>Export</strong> - The file path where the resulting data will be saved as a CSV file.</li>
-     * </ul>
-     * <p>
-     * <strong>Usage:</strong>
-     * This method is intended to be used with standard SQL queries and not with custom commands
-     * like "select-from" or "insert-into". It operates with typical SQL queries to fetch data
-     * and store it in CSV format, ensuring ease of use and compatibility.
-     * </p>
-     * <p>
-     * <strong>Note:</strong>
-     * The method expects a well-formed SQL query and a valid file path. Errors will be thrown if
-     * there are issues with the SQL execution or file writing process.
-     * </p>
+     *
+     * @param getCommand The SQL query to execute and retrieve the data.
+     *                   This should be a valid SQL statement that returns a result set.
+     * @param filePath The path where the CSV file will be saved.
+     *                 This should be a valid file path including the file name.
+     *
+     * @throws RuntimeException If an error occurs during database interaction or file writing.
      */
-
     public static void exportToCSV(String getCommand, String filePath) {
         try {
             Statement stmt = ConnectToPostgresql.connection.createStatement();
@@ -489,8 +481,6 @@ public class QueriesPostgresql {
         catch (SQLException e) {throw new RuntimeException(e);}
         catch (IOException e) {throw new RuntimeException(e);}
     }
-
-
     /**
      * <h2>Execute SQL File</h2>
      * This method reads an SQL file line by line and executes the SQL statements on a PostgreSQL database.

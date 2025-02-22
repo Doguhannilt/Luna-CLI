@@ -7,5 +7,5 @@ import org.cli.exceptions.handleForceUserLoadAndConnectException;
 import java.sql.SQLException;
 
 public class Main {
-    public static void main(String[] args) throws SQLException, ParamLengthException, HandleChangePortException, handleForceUserLoadAndConnectException {Start.commandStart();}
+    public static void main(String[] args) throws SQLException {Start.commandStart();}
 }
