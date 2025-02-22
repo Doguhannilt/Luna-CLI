@@ -4,6 +4,7 @@ package org.cli;
 import org.cli.exceptions.HandleChangePortException;
 import org.cli.exceptions.ParamLengthException;
 import org.cli.exceptions.handleForceUserLoadAndConnectException;
+import org.cli.manager.CommandHistory;
 import org.cli.manager.CommandPackage;
 
 import java.sql.SQLException;
@@ -53,6 +54,7 @@ public class Start {
                 break;
             }
             CommandPackage.command(input);
+            CommandHistory.addCommand(input);
         }
         System.out.println("---------------------");
         scanner.close();

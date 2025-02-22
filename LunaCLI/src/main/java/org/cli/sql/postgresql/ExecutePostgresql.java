@@ -7,6 +7,7 @@ import java.sql.*;
 
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
+import static org.cli.manager.CommandHistory.showHistory;
 
 public class ExecutePostgresql extends QueriesPostgresql {
 
@@ -82,6 +83,9 @@ public class ExecutePostgresql extends QueriesPostgresql {
                     break;
                 case "restore-database":
                     restoreDatabase(parts[1]);
+                    break;
+                case "history":
+                    showHistory();
                     break;
                 case "help":
                     help();

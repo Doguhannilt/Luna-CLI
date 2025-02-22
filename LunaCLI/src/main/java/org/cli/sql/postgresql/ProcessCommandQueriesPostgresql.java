@@ -50,7 +50,6 @@ public class ProcessCommandQueriesPostgresql {
         } catch (ParamLengthException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
         } catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
-
     /**
      * Handles saving an entity to the database.
      *
@@ -85,7 +84,6 @@ public class ProcessCommandQueriesPostgresql {
             System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());
         }
     }
-
     /**
      * Handles loading all users from the database.
      *
@@ -102,7 +100,6 @@ public class ProcessCommandQueriesPostgresql {
         } catch (ParamLengthException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
         } catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
-
     /**
      * Handles retrieving a specific user from the database.
      *
@@ -134,7 +131,6 @@ public class ProcessCommandQueriesPostgresql {
         } catch (ParamLengthException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
         } catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
-
     /**
      * Handles changing the database port.
      *
@@ -152,7 +148,6 @@ public class ProcessCommandQueriesPostgresql {
         } catch (ParamLengthException | HandleChangePortException e) { System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
         } catch (Exception e) { System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
-
     /**
      * Extracts parameters from a command starting at a given index.
      *
@@ -172,7 +167,6 @@ public class ProcessCommandQueriesPostgresql {
             return new LinkedList<>();
         }
     }
-
     /**
      * <h1>Connect your saved clone entity.</h1>
      *
@@ -203,8 +197,6 @@ public class ProcessCommandQueriesPostgresql {
         } catch (ParamLengthException | handleForceUserLoadAndConnectException | SQLException e) {System.err.println(INVALID_MESSAGE + "Error: " + e.getMessage());
         } catch (Exception e) { System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
-
-
     /**
      * <h1>Schedule Your Command</h1>
      * <p>
@@ -286,8 +278,6 @@ public class ProcessCommandQueriesPostgresql {
         catch (ParamLengthException e) {throw new RuntimeException(e);}
         catch (Exception e) {System.err.println(INVALID_MESSAGE + "Unexpected Error: " + e.getMessage());}
     }
-
-
     /**
      * <h1>Export Your Data</h1>
      * <p>
