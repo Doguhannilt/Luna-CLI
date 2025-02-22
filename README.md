@@ -46,7 +46,8 @@ Example:
 ```sh
  luna connect postgresql username:admin password:1234 database:mydb
 ```
-![postgresqlconnection](https://github.com/user-attachments/assets/5a310268-b399-4044-9b3b-fc5cc1dfc089)
+![cnn](https://github.com/user-attachments/assets/3aa3ec69-b005-4f13-8d6e-8062adf6a757)
+
 
 
 ### Changing the Database Port
@@ -59,9 +60,10 @@ After changing the port, restart LunaCLI for changes to take effect.
 ### Executing SQL Commands
 Once connected, you can execute SQL queries directly:
 ```sh
- SELECT * FROM users;
+ luna select-from users
 ```
-![select-from](https://github.com/user-attachments/assets/a772bf09-4840-4463-b3d6-91ce8e8d1fa7)
+![asdasd](https://github.com/user-attachments/assets/e1d87971-5edd-4071-8728-13141e58d557)
+
 
 ### Displaying Connection Info
 To view current connection settings:
@@ -70,7 +72,7 @@ To view current connection settings:
 ```
 This will output details like database name, port, and connection status.
 
-![lunainfo](https://github.com/user-attachments/assets/420848d6-5ba2-4b61-86f8-faed8d6c0e0f)
+![Ekran görüntüsü 2025-02-23 011859](https://github.com/user-attachments/assets/ee821bf6-e62d-4519-9f55-0d082cd9e5cc)
 
 
 
@@ -95,6 +97,10 @@ This will output details like database name, port, and connection status.
 - load users | Display all users
 - force user:<EntityId> | Get user by Id
 - clone user:<EntityId> | Connect a cloned user
+- history: Display all past commands
+- schedule command:<query> delay:<delay> unit:<unit>
+- export command:<query> filepath:<filepath>
+- execute filepath:<sqlFile>
 ```
 
 ## Development & Contribution
