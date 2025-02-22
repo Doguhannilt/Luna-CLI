@@ -8,6 +8,8 @@ import org.cli.exceptions.HandleChangePortException;
 import org.cli.exceptions.ParamLengthException;
 import org.cli.exceptions.handleForceUserLoadAndConnectException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
@@ -15,8 +17,7 @@ import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
 import static org.cli.manager.CommandPackage.connectionEntity;
 import static org.cli.manager.CommandPackage.saveEntity;
-import static org.cli.sql.postgresql.QueriesPostgresql.exportToCSV;
-import static org.cli.sql.postgresql.QueriesPostgresql.scheduleWithCommand;
+import static org.cli.sql.postgresql.QueriesPostgresql.*;
 import static org.cli.utils.ExportPath.filePath;
 
 public class ProcessCommandQueriesPostgresql {
@@ -352,5 +353,57 @@ public class ProcessCommandQueriesPostgresql {
         }
 
         catch (ParamLengthException e) {throw new RuntimeException(e);}
+    }
+
+    /**
+     * Handles the execution of an SQL file.
+     * <p>
+     * This method extracts the file path from the given parameters and executes the SQL commands in the file.
+     * It validates the parameters, checks for the existence of the file, and then calls {@code executeSqlFile}.
+     * </p>
+     *
+     * <h3>Usage Example:</h3>
+     * <pre>
+     * String[] parts = {"luna", "run", "filepath:/path/to/sqlfile.sql"};
+     * handleExecuteSqlFile(parts);
+     * </pre>
+     *
+     * @param parts An array of command-line arguments where one of the elements should be in the format {@code filepath:<path-to-file>}.
+     *
+     * @throws ParamLengthException If the provided parameters are insufficient.
+     * @throws IllegalArgumentException If the file path is missing or empty.
+     * @throws FileNotFoundException If the specified SQL file does not exist.
+     * @throws SQLException If an error occurs while executing the SQL file.
+     */
+    public static void handleExecuteSqlFile(String[] parts) {
+        String filePathForExecute = null;
+        try {
+            if (parts.length < 3) {
+                throw new ParamLengthException();
+            }
+
+            for (String param : parts) {
+                if (param.startsWith("filepath:")) {
+                    filePathForExecute = param.substring("filepath:".length());
+                }
+            }
+
+
+            if (filePathForExecute == null || filePathForExecute.isEmpty()) {
+                throw new IllegalArgumentException("Error: File path is missing. Use 'filepath:<path-to-file>' format.");
+            }
+
+
+            File file = new File(filePathForExecute);
+            if (!file.exists() || !file.isFile()) {
+                throw new FileNotFoundException("Error: SQL file not found at path: " + filePathForExecute);
+            }
+
+            executeSqlFile(filePathForExecute);
+        } catch (ParamLengthException | SQLException | FileNotFoundException e) {
+            System.err.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

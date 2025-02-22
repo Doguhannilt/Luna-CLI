@@ -3,6 +3,8 @@ import static org.cli.utils.Colors.*;
 
 import org.cli.conn.postgresql.ConnectToPostgresql;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
@@ -241,8 +243,44 @@ public class QueriesPostgresql {
     public static void selectFrom(String tableName, String condition) {
         String sql = "SELECT * FROM " + tableName + (condition.isEmpty() ? "" : " WHERE " + condition);
 
-        // Code for printing the table results...
+        try (Statement statement = ConnectToPostgresql.connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            List<String[]> rows = new ArrayList<>();
+            int[] columnWidths = new int[columnCount];
+
+            String[] headers = new String[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                headers[i] = metaData.getColumnName(i + 1);
+                columnWidths[i] = headers[i].length();
+            }
+            rows.add(headers);
+
+            while (resultSet.next()) {
+                String[] row = new String[columnCount];
+                for (int i = 0; i < columnCount; i++) {
+                    row[i] = resultSet.getString(i + 1);
+                    if (row[i] == null) row[i] = "NULL";
+                    columnWidths[i] = Math.max(columnWidths[i], row[i].length());
+                }
+                rows.add(row);
+            }
+
+            if (rows.size() == 1) {
+                System.out.println("No data found in the table.");
+                return;
+            }
+
+            printTable(rows, columnWidths);
+
+        } catch (SQLException e) {
+            System.out.println("SQL Execution Error: " + e.getMessage());
+        }
     }
+
 
 
     /**
@@ -450,5 +488,90 @@ public class QueriesPostgresql {
     }
         catch (SQLException e) {throw new RuntimeException(e);}
         catch (IOException e) {throw new RuntimeException(e);}
+    }
+
+
+    /**
+     * <h2>Execute SQL File</h2>
+     * This method reads an SQL file line by line and executes the SQL statements on a PostgreSQL database.
+     * It ensures that the database connection is active before execution and handles errors gracefully.
+     *
+     * <p><b>Usage:</b> Provide a valid file path containing SQL queries separated by semicolons (;).
+     * Each statement is executed individually.</p>
+     *
+     * <h3>Example:</h3>
+     * <pre>
+     * executeSqlFile("path/to/sql_file.sql");
+     * </pre>
+     *
+     * @param pathFile The file path of the SQL script to be executed.
+     * @throws SQLException If there is a database connection issue or an error in SQL execution.
+     *
+     * <h3>Exceptions Handled:</h3>
+     * <ul>
+     *     <li><b>SQLException:</b> Thrown if the database connection is not available or an SQL error occurs.</li>
+     *     <li><b>IOException:</b> Caught internally and logged if the file cannot be read.</li>
+     * </ul>
+     *
+     * <h3>Notes:</h3>
+     * <ul>
+     *     <li>Ensure that the database connection is properly established before calling this method.</li>
+     *     <li>Each SQL statement must end with a semicolon (;).</li>
+     *     <li>Empty lines in the file are ignored.</li>
+     * </ul>
+     */
+    public static void executeSqlFile(String pathFile) throws SQLException {
+        if (ConnectToPostgresql.connection == null || ConnectToPostgresql.connection.isClosed()) {throw new SQLException("Database connection is not available.");}
+
+        ConnectToPostgresql.connection.setAutoCommit(false);
+
+        try (Statement stmt = ConnectToPostgresql.connection.createStatement();
+             BufferedReader reader = new BufferedReader(new FileReader(pathFile))) {
+
+            String line;
+            StringBuilder sql = new StringBuilder();
+
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty()) {
+                    sql.append(line).append(" ");
+                }
+                if (line.endsWith(";")) {
+                    System.out.println("Executing SQL: " + sql.toString());
+
+                    boolean hasResultSet = stmt.execute(sql.toString());
+
+                    if (hasResultSet) {
+                        try (ResultSet rs = stmt.getResultSet()) {
+                            ResultSetMetaData metaData = rs.getMetaData();
+                            int columnCount = metaData.getColumnCount();
+
+                            // Başlıkları yazdır
+                            for (int i = 1; i <= columnCount; i++) {
+                                System.out.print(metaData.getColumnName(i) + "\t");
+                            }
+                            System.out.println();
+
+                            // Verileri yazdır
+                            while (rs.next()) {
+                                for (int i = 1; i <= columnCount; i++) {
+                                    System.out.print(rs.getString(i) + "\t");
+                                }
+                                System.out.println();
+                            }
+                        }
+                    }
+                    sql.setLength(0);
+                }
+            }
+
+            ConnectToPostgresql.connection.commit();
+            System.out.println("SQL file executed successfully.");
+        } catch (IOException e) {
+            System.err.println("Error reading SQL file: " + e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("SQL execution error: " + e.getMessage());
+            ConnectToPostgresql.connection.rollback();
+        }
     }
 }

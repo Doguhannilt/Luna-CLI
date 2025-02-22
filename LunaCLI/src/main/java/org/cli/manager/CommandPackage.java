@@ -74,6 +74,9 @@ public class CommandPackage {
             case "out":
                 handleExportToCsv(parts);
                 break;
+            case "run":
+                handleExecuteSqlFile(parts);
+                break;
             default:
                 if (ConnectToPostgresql.isConnected()) {
                     String sqlCommand = String.join(" ", parts).substring(5);
