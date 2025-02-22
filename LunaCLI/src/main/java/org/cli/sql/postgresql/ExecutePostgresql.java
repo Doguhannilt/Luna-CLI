@@ -10,6 +10,22 @@ import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
 
 public class ExecutePostgresql extends QueriesPostgresql {
 
+    /**
+     * Executes the given SQL query and processes it based on the command type.
+     * <p>
+     * This method handles different types of SQL commands including transaction management, table operations,
+     * stored procedure calls, and more. If the query doesn't match any predefined command, it's executed as a
+     * general SQL statement.
+     * </p>
+     * <h2>Supported Commands</h2>
+     * <a href="https://github.com/Doguhannilt/LunaCLI-Postgresql?tab=readme-ov-file#available-commands">Github Readme Link</a>
+     * <p>
+     * Each command is parsed, and the corresponding method is called to handle it. If the query is not recognized
+     * as a specific command, it is executed as a regular SQL query using the {@link Statement#execute(String)} method.
+     * </p>
+     *
+     * @param sqlQuery The SQL query to execute.
+     */
     public static void command(String sqlQuery) {
         try { if (ConnectToPostgresql.connection == null) { throw new ConnectionNullException(); }}
         catch (ConnectionNullException e) { System.out.println(e.getMessage());}
