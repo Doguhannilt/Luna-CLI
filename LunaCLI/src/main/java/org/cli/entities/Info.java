@@ -1,4 +1,4 @@
-package org.cli.sql;
+package org.cli.entities;
 
 public class Info {
     static Info info = new Info();
@@ -25,11 +25,4 @@ public class Info {
     public static String getBaseUrlForPostgresql() {
         return "jdbc:" + info.getDatabaseName() + "://localhost:" + info.getPORT() + "/";
     }
-
-   // jdbc:mysql://localhost:3306/mydatabase
-
-    public static String getBaseUrlForMysql() {
-        return "jdbc:mysql://localhost:3306/";
-    }
-
 }
