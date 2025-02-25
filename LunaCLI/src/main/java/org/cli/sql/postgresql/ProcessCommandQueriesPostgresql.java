@@ -12,10 +12,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.cli.conn.postgresql.SnippetManagerPostgresql.executeSnippet;
+import static org.cli.conn.postgresql.SnippetManagerPostgresql.saveSnippet;
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
 import static org.cli.manager.CommandPackage.*;
@@ -91,7 +95,7 @@ public class ProcessCommandQueriesPostgresql {
      *
      * @param parts The split command array.
      */
-    public static void handleLoadEntities(String[] parts) {
+    public static void handleGetAllUsers(String[] parts) {
         try {
             if (parts.length >= 3 && "users".equalsIgnoreCase(parts[2])) {
                 String persons = SaveEntityManagerPostgresql.getAllPersons();
@@ -107,7 +111,7 @@ public class ProcessCommandQueriesPostgresql {
      *
      * @param parts The split command array.
      */
-    public static void handleForceUserLoad(String[] parts) {
+    public static void handleDisplayUsers(String[] parts) {
         try {
             if (parts.length < 3) {throw new ParamLengthException();}
 
@@ -174,7 +178,7 @@ public class ProcessCommandQueriesPostgresql {
      *
      * @param parts The split command array.
      */
-    public static void handleForceUserLoadAndConnect(String[] parts) {
+    public static void handleGetUserIdAndConnect(String[] parts) {
         try {
             if (parts.length < 3) {throw new ParamLengthException();}
 
@@ -451,6 +455,102 @@ public class ProcessCommandQueriesPostgresql {
             throw new RuntimeException(ex);
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+    /**
+     * Handles the creation of a new snippet by extracting the necessary information
+     * (command and name) from the given input parameters and storing it in a HashMap.
+     * The snippet is then saved to persistent storage.
+     *
+     * <p>This method processes an array of strings, where it looks for parameters
+     * prefixed with "name:" for the snippet name and "command:" for the corresponding command.
+     * After extracting these details, the method stores the snippet in a HashMap and
+     * saves it to storage using the `saveSnippet` method.</p>
+     *
+     * @param parts An array of strings containing the command and parameters.
+     *              The array is expected to contain at least the snippet type ("create"),
+     *              the name of the snippet, and the command associated with it.
+     *
+     * @throws RuntimeException If an error occurs during processing or saving the snippet.
+     *
+     * <h3>Example Usage:</h3>
+     * <pre>
+     * String[] parts = {"luna", "snippet", "create", "name:select", "command:SELECT * FROM users"};
+     * handleSaveSnippetQuery(parts);
+     * </pre>
+     * <h3>Parameters:</h3>
+     * <ul>
+     *   <li><strong>parts:</strong> The array containing the command parameters,
+     *   where the snippet name and command are extracted.</li>
+     * </ul>
+     */
+    public static void handleSaveSnippetQuery(String[] parts) {
+        String commandSnippet = "";
+        String snippetName = "";
+        String key = "";
+        String value = "";
+
+        try {
+            System.out.println(parts[2]);
+            if (parts.length >= 3 && "create".equalsIgnoreCase(parts[2])) {
+                HashMap<String, String> hashMap = new HashMap<>();
+
+                for (int i = 0; i < parts.length; i++) {
+                    if (parts[i].startsWith("command:")) {
+
+                        commandSnippet = parts[i].substring("command:".length());
+                        while (++i < parts.length) {
+                            commandSnippet += " " + parts[i];
+                        }
+                        commandSnippet = commandSnippet.trim();
+                    } else if (parts[i].startsWith("name:")) {
+                        snippetName = parts[i].substring("name:".length()).trim();
+                    }
+                }
+
+                if (!snippetName.isEmpty()) {hashMap.put(snippetName, commandSnippet);}
+
+                for (Map.Entry<String, String> entry : hashMap.entrySet()) {
+                    key = entry.getKey();
+                    value = entry.getValue();
+                }
+                saveSnippet(key, value);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /**
+     * Executes a snippet based on its unique ID, which is extracted from the provided input parameters.
+     * This method processes the command input, finds the snippet ID, and calls the `executeSnippet`
+     * method to execute the corresponding snippet.
+     *
+     * <p>This method extracts the parameters from the input, looks for the "id:" prefix,
+     * and uses the ID to identify the snippet to execute.</p>
+     *
+     * @param parts An array of strings containing the command and parameters.
+     *              The array must contain an "id:" parameter to specify the snippet to execute.
+     *
+     * @throws RuntimeException If an error occurs during processing or snippet execution.
+     *
+     * <h3>Example Usage:</h3>
+     * <pre>
+     * String[] parts = {"luna", "snippet", "execute", "id:1"};
+     * handleExecuteSnippetById(parts);
+     * </pre>
+     * <h3>Parameters:</h3>
+     * <ul>
+     *   <li><strong>parts:</strong> The array containing the command parameters,
+     *   including the snippet ID to execute.</li>
+     * </ul>
+     */
+    public static void handleExecuteSnippetById(String[] parts) {
+        LinkedList<String> saveParams = extractParameters(parts, 2);
+        for (String param : saveParams) {
+            if (param.startsWith("id:")) {
+                String snippetId = param.substring("id:".length());
+         executeSnippet(snippetId);
+            }
         }
     }
 }

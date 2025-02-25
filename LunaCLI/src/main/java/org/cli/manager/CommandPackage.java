@@ -7,6 +7,8 @@ import org.cli.sql.postgresql.ExecutePostgresql;
 
 import java.sql.SQLException;
 
+import static org.cli.conn.postgresql.SnippetManagerPostgresql.getAllSnippets;
+
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.sql.postgresql.ProcessCommandQueriesPostgresql.*;
 
@@ -14,7 +16,7 @@ public class CommandPackage {
 
     // luna connect postgresql username:postgres password:postgres database:managify
     // luna multiple (luna select-from users) (luna load users)
-
+    // luna snippetc create name:select command:select-from stocks
 
     static public ConnectionEntity connectionEntity = new ConnectionEntity();
     static public SaveEntity saveEntity = new SaveEntity();
@@ -50,38 +52,58 @@ public class CommandPackage {
      */
     public static void handleLunaCommand(String subCommand, String[] parts) throws SQLException{
         switch (subCommand) {
+            // Connection
             case "connect":
                 handleDatabaseConnection(parts);
                 break;
-            case "save":
-                    handleSaveEntity(parts);
+            // Save an Entity
+            case "entityc":
+                handleSaveEntity(parts);
                 break;
-            case "load":
-                    handleLoadEntities(parts);
+            // Load Entites
+            case "entityl":
+                handleGetAllUsers(parts);
                 break;
-            case "force":
-                handleForceUserLoad(parts);
+            // Display an entity
+            case "entityg":
+                handleDisplayUsers(parts);
                 break;
+            // Get an entity and use it
+            case "clone":
+                handleGetUserIdAndConnect(parts);
+                break;
+            // Change Port
             case "port":
                 handleChangePort(parts);
                 break;
+            // Display Info
             case "info":
                 ConnectToPostgresql.displayInfo();
                 break;
-            case "clone":
-                handleForceUserLoadAndConnect(parts);
-                break;
+            // Scheduling a given command by user
             case "schedule":
                 handleSchedulerAndSchedule(parts);
                 break;
+            // Export
             case "out":
                 handleExportToCsv(parts);
                 break;
+            // Execute a sql file
             case "run":
                 handleExecuteSqlFile(parts);
                 break;
+            // Execute multiple queries
             case "multiple":
                 handleMultipleQueries(parts);
+                break;
+            case "snippetc":
+                handleSaveSnippetQuery(parts);
+                break;
+            case "snippetg":
+                getAllSnippets();
+                break;
+            case "snippetr":
+                handleExecuteSnippetById(parts);
                 break;
             default:
                 if (ConnectToPostgresql.isConnected()) {
