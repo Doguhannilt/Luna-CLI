@@ -47,7 +47,7 @@ public class Start {
         System.out.println(RED + ":qa! - EXIT" + RESET);
         System.out.println("---------------------");
         while (true) {
-            System.out.print(BLUE + "luna> " + RESET);  
+            System.out.print("luna> ");
             String input = scanner.nextLine().trim();
 
             if (input.equalsIgnoreCase(":qa!")) {
