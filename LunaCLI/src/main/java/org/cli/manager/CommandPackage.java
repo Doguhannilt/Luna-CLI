@@ -12,6 +12,10 @@ import static org.cli.sql.postgresql.ProcessCommandQueriesPostgresql.*;
 
 public class CommandPackage {
 
+    // luna connect postgresql username:postgres password:postgres database:managify
+    // luna multiple (luna select-from users) (luna load users)
+
+
     static public ConnectionEntity connectionEntity = new ConnectionEntity();
     static public SaveEntity saveEntity = new SaveEntity();
 
@@ -75,6 +79,9 @@ public class CommandPackage {
                 break;
             case "run":
                 handleExecuteSqlFile(parts);
+                break;
+            case "multiple":
+                handleMultipleQueries(parts);
                 break;
             default:
                 if (ConnectToPostgresql.isConnected()) {

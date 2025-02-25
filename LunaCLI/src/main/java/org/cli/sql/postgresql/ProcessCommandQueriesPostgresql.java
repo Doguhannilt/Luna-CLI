@@ -11,12 +11,14 @@ import org.cli.exceptions.handleForceUserLoadAndConnectException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
-import static org.cli.manager.CommandPackage.connectionEntity;
-import static org.cli.manager.CommandPackage.saveEntity;
+import static org.cli.manager.CommandPackage.*;
 import static org.cli.sql.postgresql.QueriesPostgresql.*;
 import static org.cli.utils.ExportPath.filePath;
 
@@ -394,6 +396,61 @@ public class ProcessCommandQueriesPostgresql {
             System.err.println("Error: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Handles multiple SQL queries by parsing a string array and extracting commands enclosed in parentheses.
+     * <p>
+     * This method processes the provided string array, extracts queries surrounded by parentheses, and executes each query.
+     * It validates the length of the input array and performs regex matching to find and trim the queries. If valid queries
+     * are found, they are executed in sequence.
+     * </p>
+     *
+     * @param parts An array of strings containing the input data, where each string can contain a command and other arguments.
+     *              The queries to be executed should be enclosed in parentheses, and the method expects at least 2 elements in the input array.
+     *
+     * @throws ParamLengthException if the length of the input array is less than 2.
+     * @throws RuntimeException if there is a problem during query execution.
+     * @throws SQLException if an error occurs during the SQL query execution.
+     *
+     * @see Pattern
+     * @see Matcher
+     */
+    public static void handleMultipleQueries(String[] parts) {
+        try {
+            if (parts.length < 2) {
+                throw new ParamLengthException();
+            }
+
+            ArrayList<String> queryList = new ArrayList<>();
+
+            String input = String.join(" ", parts);
+
+
+            Pattern pattern = Pattern.compile("\\((.*?)\\)");
+            Matcher matcher = pattern.matcher(input);
+
+
+            while (matcher.find()) {
+                String query = matcher.group(1).trim();
+                if (!query.isEmpty()) {
+                    queryList.add(query);
+                }
+            }
+
+
+            if (!queryList.isEmpty()) {
+                for (String query : queryList) {
+                    System.out.println("Executing SQL: " + query);
+                    command(query);
+                }
+            }
+
+        } catch (ParamLengthException ex) {
+            throw new RuntimeException(ex);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }
