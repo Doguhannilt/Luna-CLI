@@ -36,7 +36,7 @@ public class ConnectToPostgresql {
     /**
      * Changes the port number for the database connection.
      * <p>
-     * This method sets the new port number by updating the {@link info} object with the provided port value.
+     * This method sets the new port number by updating the {@link Info} object with the provided port value.
      * After the port is changed, a message is printed notifying the user about the port change and indicating
      * that the CLI should be restarted. The existing database connection is closed to apply the change.
      * </p>
@@ -88,6 +88,8 @@ public class ConnectToPostgresql {
      * is printed. If the connection fails, an error message is displayed with the exception details.
      * </p>
      *
+     * @apiNote If you have a connection issue, check this: <a href="https://github.com/Doguhannilt/LunaCLI-Postgresql/issues/1">Link</a>
+     *
      * @param username The username to authenticate with the database.
      * @param password The password to authenticate with the database.
      * @param database The name of the database to connect to.
@@ -103,7 +105,12 @@ public class ConnectToPostgresql {
             connection = DriverManager.getConnection(urlForConnection, username, password);
             System.out.println(VALID_MESSAGE + "Connected to database: " + connection.getMetaData().getDatabaseProductName());
         }
-        catch (SQLException e) {System.out.println(INVALID_MESSAGE + "Connection Error: " + e.getMessage());}
+        catch (SQLException e) {
+            System.out.println(INVALID_MESSAGE + "Connection Error: " + e.getMessage());
+            System.out.println("Are you sure that your database service is active?");
+            System.out.println("Run the following command: net start postgresql-x64-XX");
+            System.out.println("XX is your current Postgresql version [may be 16?]");
+        }
     }
     /**
      * Closes the current active database connection.
