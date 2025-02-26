@@ -29,7 +29,7 @@ public class SnippetManagerPostgresql {
      *
      * <h3>Example Usage:</h3>
      * <pre>
-     * saveSnippet("select", "SELECT * FROM users");
+     * luna snippetc name:MyWoahSnippet command:luna select-from users
      * </pre>
      */
     public static void saveSnippet(String key,String value) {
@@ -55,8 +55,7 @@ public class SnippetManagerPostgresql {
      *
      * <h3>Example Usage:</h3>
      * <pre>
-     * String allSnippets = getAllSnippets();
-     * System.out.println(allSnippets);
+     * luna snippetl
      * </pre>
      */
     public static String getAllSnippets() {
@@ -97,9 +96,7 @@ public class SnippetManagerPostgresql {
      * <h3>Example Usage:</h3>
      * <pre>
      * SnippetEntity snippet = getSnippet("1");
-     * if (snippet != null) {
-     *     System.out.println(snippet.getValue());
-     * }
+     * luna snippetg id:1
      * </pre>
      */
     public static SnippetEntity getSnippet(String id) {

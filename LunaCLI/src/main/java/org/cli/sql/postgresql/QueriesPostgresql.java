@@ -373,10 +373,14 @@ public class QueriesPostgresql {
         System.out.println(RED + "- help: Show this help message." + RESET);
         System.out.println("-----------------------------------------------------");
         System.out.println(GREEN + "ENTITY MANAGER" + RESET);
-        System.out.println("- save username:<username> password:<password> database:<database> | Save User");
-        System.out.println("- load users | Display all users");
-        System.out.println("- force user:<EntityId> | Get user by Id");
+        System.out.println("- entityc username:<username> password:<password> database:<database> | Save User");
+        System.out.println("- entityl users | Display all users");
+        System.out.println("- entityg user:<EntityId> | Get user by Id");
         System.out.println("- clone user:<EntityId> | Connect a cloned user");
+        System.out.println(GREEN + "SNIPPET MANAGER" + RESET);
+        System.out.println("- snippetc name:<snippet> command:<snippet code> | Create a snippet");
+        System.out.println("- snippetl | Display all users");
+        System.out.println("- snippetg id:<snippetId> | Use a snippet by id");
     }
 
     /**

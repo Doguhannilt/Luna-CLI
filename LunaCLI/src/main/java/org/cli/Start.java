@@ -41,7 +41,7 @@ public class Start {
     public static void commandStart() throws SQLException {
 
         Scanner scanner = new Scanner(System.in);
-        
+
         System.out.println(GREEN+"Stats for nerds!: http://localhost:9091/metrics"+RESET);
         System.out.println(RED + ":qa! - EXIT" + RESET);
         System.out.println("---------------------");

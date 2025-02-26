@@ -42,9 +42,7 @@ public class MetricsServer {
 
     public static void main(String[] args) throws IOException {
         HTTPServer server = new HTTPServer(9091);
-
-
-
+        
         new Thread(() -> {
             while (true) {
                 updateMetrics();

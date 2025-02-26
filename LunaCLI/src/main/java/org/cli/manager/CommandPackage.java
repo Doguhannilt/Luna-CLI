@@ -14,10 +14,6 @@ import static org.cli.sql.postgresql.ProcessCommandQueriesPostgresql.*;
 
 public class CommandPackage {
 
-    // luna connect postgresql username:postgres password:postgres database:managify
-    // luna multiple (luna select-from users) (luna load users)
-    // luna snippetc create name:select command:select-from stocks
-
     static public ConnectionEntity connectionEntity = new ConnectionEntity();
     static public SaveEntity saveEntity = new SaveEntity();
 
@@ -96,13 +92,16 @@ public class CommandPackage {
             case "multiple":
                 handleMultipleQueries(parts);
                 break;
+            // Create a snippet
             case "snippetc":
                 handleSaveSnippetQuery(parts);
                 break;
-            case "snippetg":
+            // List all snippets
+            case "snippetl":
                 getAllSnippets();
                 break;
-            case "snippetr":
+            // Get a snippet by ID
+            case "snippetg":
                 handleExecuteSnippetById(parts);
                 break;
             default:

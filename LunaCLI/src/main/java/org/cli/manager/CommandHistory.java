@@ -18,7 +18,6 @@ public class CommandHistory {
      *               This should be a non-null string representing the entered command.
      */
     public static void addCommand(String command) {history.add(command);}
-
     /**
      * Displays the list of all commands stored in the history.
      * <p>
@@ -35,12 +34,10 @@ public class CommandHistory {
     public static void showHistory() {
         for (int i = 0; i < history.size(); i++) {System.out.println((i + 1) + ". " + history.get(i));}
     }
-
     /**
      * Get history size
      * */
     public static int getHistorySize() {
         return history.size();
     }
-
 }
