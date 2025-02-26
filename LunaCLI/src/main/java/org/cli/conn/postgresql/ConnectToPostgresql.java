@@ -107,9 +107,6 @@ public class ConnectToPostgresql {
         }
         catch (SQLException e) {
             System.out.println(INVALID_MESSAGE + "Connection Error: " + e.getMessage());
-            System.out.println("Are you sure that your database service is active?");
-            System.out.println("Run the following command: net start postgresql-x64-XX");
-            System.out.println("XX is your current Postgresql version [may be 16?]");
         }
     }
     /**
