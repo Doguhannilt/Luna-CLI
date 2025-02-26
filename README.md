@@ -14,7 +14,11 @@ LunaCLI is a command-line tool designed to interact with POSTGRESQL. It allows u
 - Schedule a query
 - Execute SQL file
 - Export table data to CSV
-
+- Multiple Query Execution
+- Retrieve results in sequential order, improving efficiency for batch operations.
+- Save frequently used SQL commands for quick access. (Snippets)
+- Prometheus Support for Query Monitoring
+  
 ## Prerequisites
 Before running LunaCLI, ensure you have the following installed:
 - **Java 17 or higher**
