@@ -41,9 +41,8 @@ public class Start {
     public static void commandStart() throws SQLException {
 
         Scanner scanner = new Scanner(System.in);
-
-        System.out.println("---------------------");
-        System.out.println("Luna CLI" );
+        
+        System.out.println(GREEN+"Stats for nerds!: http://localhost:9091/metrics"+RESET);
         System.out.println(RED + ":qa! - EXIT" + RESET);
         System.out.println("---------------------");
         while (true) {
@@ -55,6 +54,7 @@ public class Start {
             }
             CommandPackage.command(input);
             CommandHistory.addCommand(input);
+
         }
         System.out.println("---------------------");
         scanner.close();

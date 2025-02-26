@@ -35,4 +35,12 @@ public class CommandHistory {
     public static void showHistory() {
         for (int i = 0; i < history.size(); i++) {System.out.println((i + 1) + ". " + history.get(i));}
     }
+
+    /**
+     * Get history size
+     * */
+    public static int getHistorySize() {
+        return history.size();
+    }
+
 }
