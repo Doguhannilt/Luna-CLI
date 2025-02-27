@@ -28,7 +28,7 @@ public class SelectFromFunctionTest {
     public void init() throws SQLException {
         ConnectToPostgresql.connection = DriverManager.getConnection(TEST_URL, TEST_USERNAME, TEST_PASSWORD);
         ConnectToPostgresql.connection.setAutoCommit(false);
-        
+
         try (Statement stmt = ConnectToPostgresql.connection.createStatement()) {
             stmt.execute("CREATE TABLE " + TEST_TABLE + " (id SERIAL PRIMARY KEY, name VARCHAR(100))");
         }
