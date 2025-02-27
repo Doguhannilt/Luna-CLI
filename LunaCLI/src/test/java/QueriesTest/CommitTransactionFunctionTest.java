@@ -30,7 +30,7 @@ public class CommitTransactionFunctionTest {
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/managify", "postgres", "postgres");
         }
         connection.setAutoCommit(true);
-     
+
     }
 
     @Test
