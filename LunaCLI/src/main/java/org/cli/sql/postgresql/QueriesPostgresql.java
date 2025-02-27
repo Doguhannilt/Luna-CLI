@@ -493,8 +493,7 @@ public class QueriesPostgresql {
         }
             catch (SQLException e) {throw new RuntimeException(e);}
     }
-        catch (SQLException e) {throw new RuntimeException(e);}
-        catch (IOException e) {throw new RuntimeException(e);}
+        catch (SQLException | IOException e) {throw new RuntimeException(e);}
     }
 	
     /**
