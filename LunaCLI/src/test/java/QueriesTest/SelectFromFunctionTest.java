@@ -27,9 +27,8 @@ public class SelectFromFunctionTest {
     @BeforeEach
     public void init() throws SQLException {
         ConnectToPostgresql.connection = DriverManager.getConnection(TEST_URL, TEST_USERNAME, TEST_PASSWORD);
-        ConnectToPostgresql.connection.setAutoCommit(false); // Transaction başlat
-
-        // Test tablosunu oluştur
+        ConnectToPostgresql.connection.setAutoCommit(false);
+        
         try (Statement stmt = ConnectToPostgresql.connection.createStatement()) {
             stmt.execute("CREATE TABLE " + TEST_TABLE + " (id SERIAL PRIMARY KEY, name VARCHAR(100))");
         }
@@ -39,10 +38,10 @@ public class SelectFromFunctionTest {
     public void cleanUp() throws SQLException {
         if (ConnectToPostgresql.connection != null) {
             try (Statement stmt = ConnectToPostgresql.connection.createStatement()) {
-                stmt.execute("DROP TABLE IF EXISTS " + TEST_TABLE); // Testten sonra tabloyu kaldır
+                stmt.execute("DROP TABLE IF EXISTS " + TEST_TABLE);
             }
-            ConnectToPostgresql.connection.rollback(); // Yapılan işlemleri geri al
-            ConnectToPostgresql.connection.close(); // Bağlantıyı kapat
+            ConnectToPostgresql.connection.rollback();
+            ConnectToPostgresql.connection.close();
         }
         System.setOut(originalOut);
     }
@@ -67,7 +66,6 @@ public class SelectFromFunctionTest {
     public void testSelectFromWithNoData() {
         System.setOut(new PrintStream(outContent));
 
-        // Tablo boş olduğu için veri bulunamamalı
         ExecutePostgresql.selectFrom(TEST_TABLE, "");
 
         String output = outContent.toString();
