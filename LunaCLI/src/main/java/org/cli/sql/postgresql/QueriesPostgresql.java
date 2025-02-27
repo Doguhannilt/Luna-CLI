@@ -34,14 +34,14 @@ public class QueriesPostgresql {
      * operations that you want to commit as a single transaction.
      * </p>
      */
-    public static void beginTransaction() {
-        try {
-            ConnectToPostgresql.connection.setAutoCommit(false);
-            System.out.println("Transaction started.");
-        } catch (SQLException e) {
-            System.out.println("Transaction Error: " + e.getMessage());
+    public static void beginTransaction() throws SQLException {
+        if (ConnectToPostgresql.connection == null || ConnectToPostgresql.connection.isClosed()) {
+            throw new SQLException("Transaction Error: Connection is null or closed.");
         }
+        ConnectToPostgresql.connection.setAutoCommit(false);
+        System.out.println("Transaction started.");
     }
+
 
     /**
      * <h1>Commit the Current Transaction</h1>
@@ -55,13 +55,18 @@ public class QueriesPostgresql {
      * of database operations that need to be persisted.
      * </p>
      */
-    public static void commitTransaction() {
-        try {
-            ConnectToPostgresql.connection.commit();
-            System.out.println("Transaction committed successfully.");
-        } catch (SQLException e) {
-            System.out.println("Commit Error: " + e.getMessage());
+    public static void commitTransaction() throws SQLException {
+
+        if (ConnectToPostgresql.connection == null || ConnectToPostgresql.connection.isClosed()) {
+            throw new SQLException("Commit Error: Connection is null or closed.");
         }
+
+        if (ConnectToPostgresql.connection.getAutoCommit()) {
+            throw new SQLException("Commit Error: No active transaction. Auto-commit mode is enabled.");
+        }
+
+        ConnectToPostgresql.connection.commit();
+        System.out.println("Transaction committed successfully.");
     }
 
     /**
