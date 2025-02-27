@@ -11,23 +11,21 @@ import java.sql.SQLException;
 import static org.cli.conn.postgresql.ConnectToPostgresql.connection;
 import static org.cli.sql.postgresql.QueriesPostgresql.beginTransaction;
 import static org.cli.sql.postgresql.QueriesPostgresql.commitTransaction;
+import static org.cli.utils.TestConfig.*;
 
 public class CommitTransactionFunctionTest {
 
-    String URL = "jdbc:postgresql://localhost:5432/managify";
-    String USER = "postgres";
-    String PASSWORD = "postgres";
 
 
     @BeforeEach
     public void setUp() throws SQLException {
-        connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        connection = DriverManager.getConnection(TEST_URL, TEST_USERNAME, TEST_PASSWORD);
     }
 
     @AfterAll
     public static void tearDownAfterAll() throws SQLException {
         if (connection == null || connection.isClosed()) {
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/managify", "postgres", "postgres");
+            connection = DriverManager.getConnection(TEST_URL, TEST_USERNAME, TEST_PASSWORD);
         }
         connection.setAutoCommit(true);
 

@@ -10,13 +10,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static org.cli.sql.postgresql.QueriesPostgresql.beginTransaction;
+import static org.cli.utils.TestConfig.*;
 
 public class BeginTransactionFunctionTest {
 
 
     @Test
     public void beginTransactionAndGetValidMessageTest() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/managify", "postgres", "postgres");
+        connection = DriverManager.getConnection(TEST_URL, TEST_USERNAME, TEST_PASSWORD);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
 
@@ -41,7 +42,7 @@ public class BeginTransactionFunctionTest {
 
     @Test
     public void beginTransactionThrowsExceptionWhenConnectionIsClosed() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/managify", "postgres", "postgres");
+        connection = DriverManager.getConnection(TEST_URL, TEST_USERNAME, TEST_PASSWORD);
         connection.close();
 
         Exception exception = Assertions.assertThrows(SQLException.class, () -> {

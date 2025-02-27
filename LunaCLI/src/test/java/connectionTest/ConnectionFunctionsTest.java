@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static org.cli.utils.TestConfig.*;
 import static org.cli.conn.postgresql.ConnectToPostgresql.*;
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.exceptions.CustomMessages.VALID_MESSAGE;
@@ -39,17 +40,15 @@ public class ConnectionFunctionsTest {
 
     @Test
     public void connectionToDatabaseTwiceAndGetInvalidMessage() {
-        String username = "postgres";
-        String password = "postgres";
-        String database = "managify";
+
 
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outContent));
 
         try {
-            connectToDatabase(username, password, database);
-            connectToDatabase(username, password, database);
+            connectToDatabase(TEST_USERNAME, TEST_PASSWORD, TEST_DATABASE);
+            connectToDatabase(TEST_USERNAME, TEST_PASSWORD, TEST_DATABASE);
         } finally {
             System.setOut(originalOut);
         }

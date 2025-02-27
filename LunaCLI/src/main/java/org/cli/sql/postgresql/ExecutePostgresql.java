@@ -91,9 +91,12 @@ public class ExecutePostgresql extends QueriesPostgresql {
                     help();
                     break;
                 default:
-                    statement.execute(sqlQuery);
-                    System.out.println(VALID_MESSAGE + sqlQuery);
-                    break;
+                    try {
+                        statement.execute(sqlQuery);
+                    } catch (SQLException e) {
+                        e.getMessage();
+                        break;
+                    }
             }
         } catch (SQLException e) {
             System.out.println(INVALID_MESSAGE + e.getMessage());

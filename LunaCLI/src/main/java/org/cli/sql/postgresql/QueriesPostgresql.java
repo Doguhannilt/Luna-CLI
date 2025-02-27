@@ -179,10 +179,12 @@ public class QueriesPostgresql {
      * <strong>Usage:</strong> This method is used to remove an existing table from the database.
      * </p>
      */
-    public static void dropTable(String tableName) {
+    public static void dropTable(String tableName) throws SQLException {
         String sql = "DROP TABLE " + tableName;
-        command(sql);
+            command(sql);
     }
+
+
 
     /**
      * <h1>Create a New Schema in the Database</h1>

@@ -1,10 +1,13 @@
 package QueriesTest;
 
-import org.junit.jupiter.api.*;
+import org.cli.sql.postgresql.ExecutePostgresql;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,10 +15,10 @@ import java.sql.Statement;
 
 import static org.cli.conn.postgresql.ConnectToPostgresql.connection;
 import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
-import static org.cli.sql.postgresql.QueriesPostgresql.createTable;
+import static org.cli.sql.postgresql.QueriesPostgresql.*;
 import static org.cli.utils.TestConfig.*;
 
-public class CreateTableFunctionTest {
+public class dropTableFunctionTest {
 
 
     static final String TEST_TABLE = "test_table";
@@ -24,6 +27,8 @@ public class CreateTableFunctionTest {
     public void init() throws SQLException {
         connection = DriverManager.getConnection(TEST_URL, TEST_USERNAME, TEST_PASSWORD);
         connection.setAutoCommit(false);
+
+        createTable(TEST_TABLE, "id SERIAL PRIMARY KEY, name VARCHAR(100)");
     }
 
     @AfterEach
@@ -32,40 +37,33 @@ public class CreateTableFunctionTest {
             try (Statement stmt = connection.createStatement()) {
                 stmt.execute("DROP TABLE IF EXISTS " + TEST_TABLE);
             }
-            connection.rollback();
             connection.close();
         }
     }
 
     @Test
-    public void testCreateTableSuccessfully() throws SQLException {
-
-        createTable(TEST_TABLE, "id SERIAL PRIMARY KEY, name VARCHAR(100)");
-
+    public void testdropTableSuccessfully() throws SQLException {
+        dropTable(TEST_TABLE);
 
         boolean tableExists = checkIfTableExists(TEST_TABLE);
-        Assertions.assertTrue(tableExists, "Table should be created successfully.");
+        Assertions.assertFalse(tableExists, "Table has been dropped");
     }
-
 
     @Test
-    public void testCreateTableWithInvalidSQLThrowsException() throws SQLException {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+    public void testdropTableWithInvalidTableName() {
+        String invalid_table_name = "Invalid";
 
-        try {
-            createTable(TEST_TABLE, "INVALID SQL");
-            connection.commit();
-        } catch (SQLException e) {
-            connection.rollback();
-            System.out.println(e.getMessage());
-        }
 
-        String output = outContent.toString();
-        System.out.println(output);
-        Assertions.assertTrue(output.contains(INVALID_MESSAGE + "ERROR"),
-                "Beklenen hata mesajı yazdırılmadı: " + output);
+        Exception exception = Assertions.assertThrows(SQLException.class, () -> {
+            dropTable(invalid_table_name);
+        });
+
+
+        Assertions.assertTrue(exception.getMessage().contains(exception.getMessage()),
+                "Expected: " + exception + ", but got: " + exception.getMessage());
+
     }
+
 
     private boolean checkIfTableExists(String tableName) throws SQLException {
         String query = "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = '" + tableName + "')";
