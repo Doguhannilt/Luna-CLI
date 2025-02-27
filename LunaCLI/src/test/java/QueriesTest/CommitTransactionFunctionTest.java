@@ -24,6 +24,14 @@ public class CommitTransactionFunctionTest {
         connection = DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
+    @AfterAll
+    public static void tearDownAfterAll() throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/managify", "postgres", "postgres");
+        }
+        connection.setAutoCommit(true);
+     
+    }
 
     @Test
     public void beginTransactionAndGetValidMessageTest() throws SQLException {
