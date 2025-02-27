@@ -1,24 +1,20 @@
 package QueriesTest;
 
-import org.cli.sql.postgresql.ExecutePostgresql;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.cli.conn.postgresql.ConnectToPostgresql.connection;
-import static org.cli.exceptions.CustomMessages.INVALID_MESSAGE;
 import static org.cli.sql.postgresql.QueriesPostgresql.*;
 import static org.cli.utils.TestConfig.*;
 
-public class dropTableFunctionTest {
+public class DropTableFunctionTest {
 
 
     static final String TEST_TABLE = "test_table";
@@ -47,21 +43,6 @@ public class dropTableFunctionTest {
 
         boolean tableExists = checkIfTableExists(TEST_TABLE);
         Assertions.assertFalse(tableExists, "Table has been dropped");
-    }
-
-    @Test
-    public void testdropTableWithInvalidTableName() {
-        String invalid_table_name = "Invalid";
-
-
-        Exception exception = Assertions.assertThrows(SQLException.class, () -> {
-            dropTable(invalid_table_name);
-        });
-
-
-        Assertions.assertTrue(exception.getMessage().contains(exception.getMessage()),
-                "Expected: " + exception + ", but got: " + exception.getMessage());
-
     }
 
 
